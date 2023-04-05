@@ -41,7 +41,9 @@ void func(int connfd)
             write(connfd, buff, sizeof(buff));
             read(connfd, buff, sizeof(buff));
             printf("sent email:%s\n",buff);
-            char* message = "Registration Process started...\n Enter e-mail: \n";
+
+            
+            char* message = "Enter e-mail: \n";
             n = 0;
             while ((buff[n] = message[n]) && (message[n++] != '\n'))
                 ;
