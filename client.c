@@ -9,6 +9,37 @@
 #define MAX 80
 #define PORT 8081
 #define SA struct sockaddr
+
+/*
+Do lado do servidor, usaremos arquivos .txt numa pasta para armazenar perfils
+Detalhamento de funções
+//cadastrar um novo perfil utilizando o email como identificador;
+CREATE_PROFILE(string email)
+ dps de pegar o email, precisa pegar tbm curso, ano de formação e habilidades
+ string course, skills
+ int year
+// listar todas as pessoas (email e nome) formadas em um determinado curso;
+LIST_COUSE(string n_course)
+só checar se string==curso
+// listar todas as pessoas (email e nome) que possuam uma determinada habilidade;
+LIST_SKILL(string sub_skill)
+checar se a string sub_skill é substring da string skills de todos
+// listar todas as pessoas (email, nome e curso) formadas em um determinado ano;
+LIST_YEAR(int n_year)
+checar se n_year==year dos perfis
+// listar todas as informações de todos os perfis;
+LIST_ALL()
+// dado o email de um perfil, retornar suas informações;
+GET_PROFILE(string email)
+ só checar os nomes dos arquivos,veja abaixo
+// remover um perfil a partir de seu identificador (email);
+REMOVE_PROFILE(string email)
+ salvamos os arquivos com a email(ID) como nome pra ficar mais facil de deletar
+
+*/
+
+
+
 void func(int sockfd)
 {
 	char buff[MAX];
