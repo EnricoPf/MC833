@@ -47,16 +47,25 @@ int CREATE_PROFILE(char *data)
         token = strtok(NULL, ";");
         counter++;
     }
-    printf("\nPassou\n");
-    printf(email);
-    printf("\n");
     FILE* fp;
     char savepath[100] = "./data/";
     strcat(savepath,email);
     strcat(savepath,".txt");
-    printf(savepath);
-    printf("\n");
     fp = fopen(savepath,"w");
+    fputs(email,fp);
+    fputc('\n',fp);
+    fputs(name,fp);
+    fputc('\n',fp);
+    fputs(surname,fp);
+    fputc('\n',fp);
+    fputs(residence,fp);
+    fputc('\n',fp);
+    fputs(course,fp);
+    fputc('\n',fp);
+    fputs(year,fp);
+    fputc('\n',fp);
+    fputs(skills,fp);
+    fclose(fp);
 }
 
 int main(){
