@@ -66,9 +66,26 @@ int CREATE_PROFILE(char *data)
     fputc('\n',fp);
     fputs(skills,fp);
     fclose(fp);
+    return 1;
+}
+
+int REMOVE_PROFILE(char* n_email){
+    char filepath[100] = "./data/";
+    strcat(filepath,n_email);
+    strcat(filepath,".txt");
+    int ret = remove(filepath);
+    if (ret == 0){
+        return 0;
+    }else{
+        printf("Falhou\n");
+        return 1;
+    }
 }
 
 int main(){
     char data[] = "enrico@gmail.com;enrico;fernandes;casa do chapéu;Engenharia;2023;codar,andar,correr,pular,marretar.";
-    CREATE_PROFILE(data);
+    //CREATE_PROFILE(data);
+    char n_email[] = "enrico@gmail.com";
+    REMOVE_PROFILE(n_email);
+    return 0;
 }
