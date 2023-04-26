@@ -50,6 +50,33 @@ struct profile{
     char* skills;
 };
 
+int CREATE_PROFILE(char* data){
+
+}
+
+int LIST_COURSE(char* n_course){
+    
+};
+int LIST_SKILL(char* sub_skill){
+    
+};
+int LIST_YEAR(int year){
+    
+};
+int LIST_ALL(){
+    
+};
+int GET_PROFILE(char* n_email){
+    
+};
+int REMOVE_PROFILE(char* n_email){
+    
+};
+
+
+
+
+
 // Function designed for chat between client and server.
 void func(int connfd)
 {
