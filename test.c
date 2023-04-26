@@ -12,8 +12,6 @@
 
 int CREATE_PROFILE(char *data)
 {
-    printf("DATA:");
-    printf(data);
     char *token = strtok(data, ";");
     char email[100],name[100],surname[100],residence[100],course[100],year[100],skills[100];
     // token[0] = email; 1-name; 2-surname; 3-residence; 4-course; 5-year; 6-skills;
@@ -82,10 +80,42 @@ int REMOVE_PROFILE(char* n_email){
     }
 }
 
+int GET_PROFILE(char* n_email){
+    char filepath[100] = "./data/";
+    strcat(filepath,n_email);
+    strcat(filepath,".txt");   
+    if (access(filepath, F_OK) == 0) {
+        printf("Arquivo existe!\n");
+        char c, buffer[100];
+        FILE* fp;
+        fp = fopen(filepath,"r");
+        fgets(buffer, 50, fp);
+        printf("Email: %s", buffer);
+        fgets(buffer, 50, fp);
+        buffer[strlen(buffer)-1] = ' ';
+        printf("Nome: %sSobrenome: ", buffer);
+        fgets(buffer, 50, fp);
+        printf("%s", buffer);
+        fgets(buffer, 50, fp);
+        printf("Residência: %s", buffer);
+        fgets(buffer, 50, fp);
+        printf("Formação Acadêmica: %s", buffer);
+        fgets(buffer, 50, fp);
+        printf("Ano de Formatura: %s", buffer);
+        fgets(buffer, 50, fp);
+        printf("Habilidades: %s\n", buffer);
+        return 0;
+    } else {
+        printf("Arquivo NAO existe!\n");
+    // file doesn't exist
+    }
+    return 0;
+}
+
 int main(){
     char data[] = "enrico@gmail.com;enrico;fernandes;casa do chapéu;Engenharia;2023;codar,andar,correr,pular,marretar.";
     //CREATE_PROFILE(data);
     char n_email[] = "enrico@gmail.com";
-    REMOVE_PROFILE(n_email);
+    GET_PROFILE(n_email);
     return 0;
 }
