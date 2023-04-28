@@ -6,6 +6,7 @@
 #include <strings.h> // bzero()
 #include <sys/socket.h>
 #include <unistd.h> // read(), write(), close()
+#include <dirent.h> // loop in directories
 #define MAX 80
 #define PORT 8081
 #define SA struct sockaddr
@@ -89,6 +90,7 @@ int GET_PROFILE(char* n_email){
         char c, buffer[100];
         FILE* fp;
         fp = fopen(filepath,"r");
+        printf("-----------------------------\n");
         fgets(buffer, 50, fp);
         printf("Email: %s", buffer);
         fgets(buffer, 50, fp);
@@ -104,18 +106,306 @@ int GET_PROFILE(char* n_email){
         printf("Ano de Formatura: %s", buffer);
         fgets(buffer, 50, fp);
         printf("Habilidades: %s\n", buffer);
+        printf("------------------------------\n");
         return 0;
     } else {
-        printf("Arquivo NAO existe!\n");
+        printf("Arquivo (%s) NAO existe!\n", filepath);
     // file doesn't exist
     }
     return 0;
 }
+int LIST_COURSE(char *n_course){
+
+    DIR *dir;
+    struct dirent *entry;
+    char path[100];
+    // Open the directory
+    dir = opendir("./data/");
+    if (dir == NULL) {
+        perror("opendir");
+        exit(EXIT_FAILURE);
+    }
+    printf("Pessoas formadas em %s:\n", n_course);
+    int cont = 0;
+    // Loop through all the entries in the directory
+    while ((entry = readdir(dir)) != NULL) {
+        // Check if the entry is a regular file and has a ".txt" extension
+        if (entry->d_type == DT_REG && strstr(entry->d_name, ".txt") != NULL) {
+            // Construct the path to the file
+            char path[200] = "./data/";
+            strcat(path, entry->d_name);
+            // snprintf(path, sizeof(path), "/data/%s", entry->d_name);
+            char c, buffer[100];
+
+            // Process the file
+            // printf("Processing file: %s\n", path);
+            // TODO: Add your code to process the file here
+            FILE* fp;
+            fp = fopen(path,"r");
+            fgets(buffer, 50, fp);
+            // printf("Email: %s", buffer);
+            char n_email[100];
+            strcpy(n_email,buffer);
+            char *newline = strchr(n_email, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            fgets(buffer, 50, fp);
+            buffer[strlen(buffer)-1] = ' ';
+            char name[100];
+            strcpy(name,buffer);
+            newline = strchr(n_email, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            // printf("Nome: %sSobrenome: ", buffer);
+            fgets(buffer, 50, fp);
+            // printf("%s", buffer);
+            fgets(buffer, 50, fp);
+            // printf("Residência: %s", buffer);
+            fgets(buffer, 50, fp);
+            // printf("Formação Acadêmica: %s", buffer);
+            fgets(buffer, 50, fp);
+            // printf("Ano de Formatura: %s", buffer);
+            newline = strchr(buffer, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            if(!strcmp(buffer, n_course)){
+                printf("%s %s\n", n_email, name);
+                cont ++;
+            }
+        }
+    }
+    // Close the directory
+    closedir(dir);
+    if (cont == 0){
+        printf("Não há nenhum usuário cadastrado do curso %s\n", n_course);
+    }
+
+
+};
+
+int LIST_YEAR(int year){
+
+    DIR *dir;
+    struct dirent *entry;
+    char path[100];
+    // Open the directory
+    dir = opendir("./data/");
+    if (dir == NULL) {
+        perror("opendir");
+        exit(EXIT_FAILURE);
+    }
+    printf("Pessoas formadas em %d:\n", year);
+    int cont = 0;
+    // Loop through all the entries in the directory
+    while ((entry = readdir(dir)) != NULL) {
+        // Check if the entry is a regular file and has a ".txt" extension
+        if (entry->d_type == DT_REG && strstr(entry->d_name, ".txt") != NULL) {
+            // Construct the path to the file
+            char path[200] = "./data/";
+            strcat(path, entry->d_name);
+            // snprintf(path, sizeof(path), "/data/%s", entry->d_name);
+            char c, buffer[100];
+
+            // Process the file
+            // printf("Processing file: %s\n", path);
+            // TODO: Add your code to process the file here
+            FILE* fp;
+            fp = fopen(path,"r");
+            fgets(buffer, 50, fp);
+            // printf("Email: %s", buffer);
+            char n_email[100];
+            strcpy(n_email,buffer);
+            char *newline = strchr(n_email, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            fgets(buffer, 50, fp);
+            buffer[strlen(buffer)-1] = ' ';
+            char name[100];
+            strcpy(name,buffer);
+            newline = strchr(name, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            // printf("Nome: %sSobrenome: ", buffer);
+            fgets(buffer, 50, fp);
+            // printf("%s", buffer);
+            fgets(buffer, 50, fp);
+            // printf("Residência: %s", buffer);
+            fgets(buffer, 50, fp);
+            // printf("Formação Acadêmica: %s", buffer);
+            char n_course[100];
+            strcpy(n_course,buffer);
+            newline = strchr(n_course, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            fgets(buffer, 50, fp);
+            int graduation_year = atoi(buffer);
+            if(graduation_year == year){
+                printf("%s %s %s\n", n_email, name, n_course);
+                cont ++;
+            }
+        }
+    }
+    // Close the directory
+    closedir(dir);
+    if (cont == 0){
+        printf("Não há nenhum usuário cadastrado do ano %d\n", year);
+    }
+
+
+};
+
+int LIST_ALL(){
+
+    DIR *dir;
+    struct dirent *entry;
+    char path[100];
+    // Open the directory
+    dir = opendir("./data/");
+    if (dir == NULL) {
+        perror("opendir");
+        exit(EXIT_FAILURE);
+    }
+    int cont = 0;
+    // Loop through all the entries in the directory
+    while ((entry = readdir(dir)) != NULL) {
+        // Check if the entry is a regular file and has a ".txt" extension
+        if (entry->d_type == DT_REG && strstr(entry->d_name, ".txt") != NULL) {
+            // Construct the path to the file
+            char path[200] = "";
+            strcat(path, entry->d_name);
+            // snprintf(path, sizeof(path), "/data/%s", entry->d_name);
+            char c, buffer[100];
+            char *suffix = ".txt";
+            char *last_occurrence = strrchr(path, *suffix);
+            int prefix_length = last_occurrence - path;
+            char prefix[100];
+            strncpy(prefix, path, prefix_length);
+            prefix[prefix_length] = '\0';
+            // Process the file
+            // printf("Processing file: %s\n", path);
+            // TODO: Add your code to process the file here
+
+            GET_PROFILE(prefix);
+            cont ++;
+        }
+    }
+    // Close the directory
+    closedir(dir);
+    if (cont == 0){
+        printf("Não há nenhum usuário cadastrado\n");
+    }
+
+
+};
+
+int LIST_SKILL(char *sub_skill){
+
+    DIR *dir;
+    struct dirent *entry;
+    char path[100];
+    // Open the directory
+    dir = opendir("./data/");
+    if (dir == NULL) {
+        perror("opendir");
+        exit(EXIT_FAILURE);
+    }
+    printf("Pessoas que possuem habilidade %s:\n", sub_skill);
+    int cont = 0;
+    // Loop through all the entries in the directory
+    while ((entry = readdir(dir)) != NULL) {
+        // Check if the entry is a regular file and has a ".txt" extension
+        if (entry->d_type == DT_REG && strstr(entry->d_name, ".txt") != NULL) {
+            // Construct the path to the file
+            char path[200] = "./data/";
+            strcat(path, entry->d_name);
+            // snprintf(path, sizeof(path), "/data/%s", entry->d_name);
+            char c, buffer[100];
+
+            // Process the file
+            // printf("Processing file: %s\n", path);
+            // TODO: Add your code to process the file here
+            FILE* fp;
+            fp = fopen(path,"r");
+            fgets(buffer, 50, fp);
+            // printf("Email: %s", buffer);
+            char n_email[100];
+            strcpy(n_email,buffer);
+            char *newline = strchr(n_email, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            fgets(buffer, 50, fp);
+            buffer[strlen(buffer)-1] = ' ';
+            char name[100];
+            strcpy(name,buffer);
+            newline = strchr(n_email, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            // printf("Nome: %sSobrenome: ", buffer);
+            fgets(buffer, 50, fp);
+            // printf("%s", buffer);
+            fgets(buffer, 50, fp);
+            // printf("Residência: %s", buffer);
+            fgets(buffer, 50, fp);
+            // printf("Formação Acadêmica: %s", buffer);
+            fgets(buffer, 50, fp);
+            // printf("Ano de Formatura: %s", buffer);
+            fgets(buffer, 50, fp);
+            // printf("Habilidades: %s\n", buffer);
+            newline = strchr(buffer, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            if(strstr(buffer, sub_skill)){
+                printf("%s %s\n", n_email, name);
+                cont ++;
+            }
+        }
+    }
+    // Close the directory
+    closedir(dir);
+    if (cont == 0){
+        printf("Não há nenhum usuário cadastrado com a habilidade %s\n", sub_skill);
+    }
+
+
+};
 
 int main(){
-    char data[] = "enrico@gmail.com;enrico;fernandes;casa do chapéu;Engenharia;2023;codar,andar,correr,pular,marretar.";
-    //CREATE_PROFILE(data);
+    char data[] = "enrico@gmail.com;enrico;fernandes;casa do chapéu;Engenharia2;2023;codar,andar,correr,pular,marretar.";
+    CREATE_PROFILE(data);
     char n_email[] = "enrico@gmail.com";
+    char data2[] = "jhonjhe@gmail.com;vitor;bap;quadras da med;Engenharia;2023;jogar fut, correr, chapelar, codar, amar";
+    char email2[] = "jhonjhe@gmail.com";
+    CREATE_PROFILE(data2);
     GET_PROFILE(n_email);
+    GET_PROFILE(email2);
+    printf("---------------");
+    // REMOVE_PROFILE(n_email);
+    GET_PROFILE(n_email);
+    printf("\n------###--------\n");
+    LIST_COURSE("Engenharia3");
+    printf("\n------###--------\n");
+    LIST_YEAR(2013);
+    printf("\n------###--------\n");
+    LIST_ALL();
+    printf("\n------&&&&&&&&&&&&&&&&-------\n");
+    LIST_SKILL("codar");
     return 0;
 }
