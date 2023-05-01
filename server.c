@@ -67,7 +67,7 @@ struct profile
 int CREATE_PROFILE(char *data)
 {
     char *token = strtok(data, ";");
-    char email[100],name[100],surname[100],residence[100],course[100],year[100],skills[100];
+    char email[100],name[100],surname[100],residence[100],course[100],year[4],skills[600];
     // token[0] = email; 1-name; 2-surname; 3-residence; 4-course; 5-year; 6-skills;
     int counter = 0;
     while (token != NULL)
