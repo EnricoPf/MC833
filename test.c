@@ -81,8 +81,11 @@ int REMOVE_PROFILE(char* n_email){
     }
 }
 
-int GET_PROFILE(char* n_email){
+char* GET_PROFILE(char* n_email){
     char filepath[100] = "./data/";
+    char *profile = malloc(1000 * sizeof(char));
+    strcpy(profile, "");
+    char formatted_string[1000];
     strcat(filepath,n_email);
     strcat(filepath,".txt");   
     if (access(filepath, F_OK) == 0) {
@@ -90,32 +93,45 @@ int GET_PROFILE(char* n_email){
         char c, buffer[100];
         FILE* fp;
         fp = fopen(filepath,"r");
-        printf("-----------------------------\n");
+        sprintf(formatted_string, "-----------------------------\n");
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
-        printf("Email: %s", buffer);
+        sprintf(formatted_string, "Email: %s", buffer);
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
         buffer[strlen(buffer)-1] = ' ';
-        printf("Nome: %sSobrenome: ", buffer);
+        sprintf(formatted_string, "Nome: %sSobrenome: ", buffer);
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
-        printf("%s", buffer);
+        sprintf(formatted_string, "%s", buffer);
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
-        printf("Residência: %s", buffer);
+        sprintf(formatted_string, "Residência: %s", buffer);
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
-        printf("Formação Acadêmica: %s", buffer);
+        sprintf(formatted_string, "Formação Acadêmica: %s", buffer);
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
-        printf("Ano de Formatura: %s", buffer);
+        sprintf(formatted_string, "Ano de Formatura: %s", buffer);
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
-        printf("Habilidades: %s\n", buffer);
-        printf("------------------------------\n");
-        return 0;
+        sprintf(formatted_string, "Habilidades: %s\n", buffer);
+        strcat(profile, formatted_string);
+        sprintf(formatted_string, "------------------------------\n");
+        strcat(profile, formatted_string);
+        return profile;
     } else {
         printf("Arquivo (%s) NAO existe!\n", filepath);
     // file doesn't exist
     }
-    return 0;
+    return profile;
 }
 
-int LIST_COURSE(char *n_course){
+char* LIST_COURSE(char *n_course){
+
+    char *profile = malloc(1000 * sizeof(char));
+    strcpy(profile, "");
+    char formatted_string[100];
 
     DIR *dir;
     struct dirent *entry;
@@ -126,7 +142,6 @@ int LIST_COURSE(char *n_course){
         perror("opendir");
         exit(EXIT_FAILURE);
     }
-    printf("Pessoas formadas em %s:\n", n_course);
     int cont = 0;
     // Loop through all the entries in the directory
     while ((entry = readdir(dir)) != NULL) {
@@ -168,15 +183,16 @@ int LIST_COURSE(char *n_course){
             // printf("Residência: %s", buffer);
             fgets(buffer, 50, fp);
             // printf("Formação Acadêmica: %s", buffer);
-            fgets(buffer, 50, fp);
-            // printf("Ano de Formatura: %s", buffer);
             newline = strchr(buffer, '\n');
             if (newline != NULL) {
                 // Replace the newline character with a null character
                 *newline = '\0';
             }
             if(!strcmp(buffer, n_course)){
-                printf("%s %s\n", n_email, name);
+                snprintf(formatted_string, 1000, "%s ", n_email);
+                strcat(profile, formatted_string);
+                snprintf(formatted_string, 1000, "%s\n", name);
+                strcat(profile, formatted_string);
                 cont ++;
             }
         }
@@ -184,13 +200,18 @@ int LIST_COURSE(char *n_course){
     // Close the directory
     closedir(dir);
     if (cont == 0){
-        printf("Não há nenhum usuário cadastrado do curso %s\n", n_course);
+        return "NGM";
     }
+    return profile;
 
 
 };
 
-int LIST_YEAR(int year){
+char* LIST_YEAR(int year){
+
+    char *profile = malloc(1000 * sizeof(char));
+    strcpy(profile, "");
+    char formatted_string[100];
 
     DIR *dir;
     struct dirent *entry;
@@ -237,23 +258,18 @@ int LIST_YEAR(int year){
                 *newline = '\0';
             }
             // printf("Nome: %sSobrenome: ", buffer);
-            fgets(buffer, 50, fp);
-            // printf("%s", buffer);
+
             fgets(buffer, 50, fp);
             // printf("Residência: %s", buffer);
             fgets(buffer, 50, fp);
             // printf("Formação Acadêmica: %s", buffer);
-            char n_course[100];
-            strcpy(n_course,buffer);
-            newline = strchr(n_course, '\n');
-            if (newline != NULL) {
-                // Replace the newline character with a null character
-                *newline = '\0';
-            }
+            fgets(buffer, 50, fp);
+            // printf("Ano de Formatura: %s", buffer);
             fgets(buffer, 50, fp);
             int graduation_year = atoi(buffer);
             if(graduation_year == year){
-                printf("%s %s %s\n", n_email, name, n_course);
+                snprintf(formatted_string, 1000, "%s %s\n", n_email, name);
+                strcat(profile, formatted_string);
                 cont ++;
             }
         }
@@ -261,13 +277,17 @@ int LIST_YEAR(int year){
     // Close the directory
     closedir(dir);
     if (cont == 0){
-        printf("Não há nenhum usuário cadastrado do ano %d\n", year);
+        return "Não há nenhum usuário cadastrado do ano";
     }
+    return profile;
 
 
 };
+char* LIST_ALL(){
 
-int LIST_ALL(){
+    char *profile = malloc(1000 * sizeof(char));
+    strcpy(profile, "");
+    char formatted_string[1000];
 
     DIR *dir;
     struct dirent *entry;
@@ -298,20 +318,26 @@ int LIST_ALL(){
             // printf("Processing file: %s\n", path);
             // TODO: Add your code to process the file here
 
-            GET_PROFILE(prefix);
+            strcpy(formatted_string,GET_PROFILE(prefix));
+            strcat(profile, formatted_string);
             cont ++;
         }
     }
     // Close the directory
     closedir(dir);
     if (cont == 0){
-        printf("Não há nenhum usuário cadastrado\n");
+        return "Não há nenhum usuário cadastrado\n";
     }
+    return profile;
 
 
 };
 
-int LIST_SKILL(char *sub_skill){
+char* LIST_SKILL(char *sub_skill){
+
+    char *profile = malloc(1000 * sizeof(char));
+    strcpy(profile, "");
+    char formatted_string[1000];
 
     DIR *dir;
     struct dirent *entry;
@@ -322,7 +348,6 @@ int LIST_SKILL(char *sub_skill){
         perror("opendir");
         exit(EXIT_FAILURE);
     }
-    printf("Pessoas que possuem habilidade %s:\n", sub_skill);
     int cont = 0;
     // Loop through all the entries in the directory
     while ((entry = readdir(dir)) != NULL) {
@@ -374,7 +399,8 @@ int LIST_SKILL(char *sub_skill){
                 *newline = '\0';
             }
             if(strstr(buffer, sub_skill)){
-                printf("%s %s\n", n_email, name);
+                snprintf(formatted_string, 1000, "%s %s\n", n_email, name);
+                strcat(profile, formatted_string);
                 cont ++;
             }
         }
@@ -382,31 +408,32 @@ int LIST_SKILL(char *sub_skill){
     // Close the directory
     closedir(dir);
     if (cont == 0){
-        printf("Não há nenhum usuário cadastrado com a habilidade %s\n", sub_skill);
+        return "Não há nenhum usuário cadastrado com essa habilidade\n";
     }
+    return profile;
 
 
 };
 
 int main(){
-    char data[] = "enrico@gmail.com;enrico;fernandes;casa do chapéu;Engenharia2;2023;codar,andar,correr,pular,marretar.";
+    char data[] = "enrico@gmail.com;enrico;fernandes;casa do chapéu;Engenharia;2023;codar,andar,correr,pular,marretar.";
     CREATE_PROFILE(data);
     char n_email[] = "enrico@gmail.com";
     char data2[] = "jhonjhe@gmail.com;vitor;bap;quadras da med;Engenharia;2023;jogar fut, correr, chapelar, codar, amar";
     char email2[] = "jhonjhe@gmail.com";
     CREATE_PROFILE(data2);
-    GET_PROFILE(n_email);
-    GET_PROFILE(email2);
-    printf("---------------");
-    // REMOVE_PROFILE(n_email);
-    GET_PROFILE(n_email);
+    // printf("%s\n", GET_PROFILE(n_email));
+    // printf("%s", GET_PROFILE(email2));
+    // printf("---------------");
+    // // REMOVE_PROFILE(n_email);
+    // printf("%s", GET_PROFILE(n_email));
     printf("\n------###--------\n");
-    LIST_COURSE("Engenharia3");
+    printf("%s\n",LIST_COURSE("Engenharia"));
     printf("\n------###--------\n");
-    LIST_YEAR(2013);
+    printf("%s\n",LIST_YEAR(2023));
     printf("\n------###--------\n");
-    LIST_ALL();
+    printf("%s\n",LIST_ALL());
     printf("\n------&&&&&&&&&&&&&&&&-------\n");
-    LIST_SKILL("codar");
-    return 0;
+    printf("%s\n",LIST_SKILL("codar"));
+    // return 0;
 }

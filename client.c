@@ -6,7 +6,7 @@
 #include <strings.h> // bzero()
 #include <sys/socket.h>
 #include <unistd.h> // read(), write(), close()
-#define MAX 80
+#define MAX 80000
 #define PORT 8081
 #define SA struct sockaddr
 
@@ -38,6 +38,7 @@ void func(int sockfd)
 	char buff[MAX];
 	int n;
     printf("Enter your command:\n");
+	printf("commands: register\nlist_course\nlist_skills\nlist_year\nlist_all\nget_email\nremove_email\n");
 	for (;;) {
 		bzero(buff, sizeof(buff));
 		n = 0;

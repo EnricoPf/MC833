@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <unistd.h> // read(), write(), close()
 #include <dirent.h> // loop in directories
-#define MAX 80
+#define MAX 80000
 #define PORT 8081
 #define SA struct sockaddr
 
@@ -134,8 +134,11 @@ int REMOVE_PROFILE(char* n_email){
     }
 }
 
-int GET_PROFILE(char* n_email){
+char* GET_PROFILE(char* n_email){
     char filepath[100] = "./data/";
+    char *profile = malloc(1000 * sizeof(char));
+    strcpy(profile, "");
+    char formatted_string[1000];
     strcat(filepath,n_email);
     strcat(filepath,".txt");   
     if (access(filepath, F_OK) == 0) {
@@ -143,31 +146,44 @@ int GET_PROFILE(char* n_email){
         char c, buffer[100];
         FILE* fp;
         fp = fopen(filepath,"r");
-        printf("-----------------------------\n");
+        sprintf(formatted_string, "-----------------------------\n");
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
-        printf("Email: %s", buffer);
+        sprintf(formatted_string, "Email: %s", buffer);
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
         buffer[strlen(buffer)-1] = ' ';
-        printf("Nome: %sSobrenome: ", buffer);
+        sprintf(formatted_string, "Nome: %sSobrenome: ", buffer);
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
-        printf("%s", buffer);
+        sprintf(formatted_string, "%s", buffer);
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
-        printf("Residência: %s", buffer);
+        sprintf(formatted_string, "Residência: %s", buffer);
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
-        printf("Formação Acadêmica: %s", buffer);
+        sprintf(formatted_string, "Formação Acadêmica: %s", buffer);
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
-        printf("Ano de Formatura: %s", buffer);
+        sprintf(formatted_string, "Ano de Formatura: %s", buffer);
+        strcat(profile, formatted_string);
         fgets(buffer, 50, fp);
-        printf("Habilidades: %s\n", buffer);
-        printf("------------------------------\n");
-        return 0;
+        sprintf(formatted_string, "Habilidades: %s\n", buffer);
+        strcat(profile, formatted_string);
+        sprintf(formatted_string, "------------------------------\n");
+        strcat(profile, formatted_string);
+        return profile;
     } else {
         printf("Arquivo (%s) NAO existe!\n", filepath);
     // file doesn't exist
     }
-    return 0;
+    return profile;
 }
-int LIST_COURSE(char *n_course){
+char* LIST_COURSE(char *n_course){
+
+    char *profile = malloc(1000 * sizeof(char));
+    strcpy(profile, "");
+    char formatted_string[100];
 
     DIR *dir;
     struct dirent *entry;
@@ -178,7 +194,6 @@ int LIST_COURSE(char *n_course){
         perror("opendir");
         exit(EXIT_FAILURE);
     }
-    printf("Pessoas formadas em %s:\n", n_course);
     int cont = 0;
     // Loop through all the entries in the directory
     while ((entry = readdir(dir)) != NULL) {
@@ -220,15 +235,16 @@ int LIST_COURSE(char *n_course){
             // printf("Residência: %s", buffer);
             fgets(buffer, 50, fp);
             // printf("Formação Acadêmica: %s", buffer);
-            fgets(buffer, 50, fp);
-            // printf("Ano de Formatura: %s", buffer);
             newline = strchr(buffer, '\n');
             if (newline != NULL) {
                 // Replace the newline character with a null character
                 *newline = '\0';
             }
             if(!strcmp(buffer, n_course)){
-                printf("%s %s\n", n_email, name);
+                snprintf(formatted_string, 1000, "%s ", n_email);
+                strcat(profile, formatted_string);
+                snprintf(formatted_string, 1000, "%s\n", name);
+                strcat(profile, formatted_string);
                 cont ++;
             }
         }
@@ -236,13 +252,18 @@ int LIST_COURSE(char *n_course){
     // Close the directory
     closedir(dir);
     if (cont == 0){
-        printf("Não há nenhum usuário cadastrado do curso %s\n", n_course);
+        return "Nenhum perfil se formou nesse curso\n";
     }
+    return profile;
 
 
 };
 
-int LIST_YEAR(int year){
+char* LIST_YEAR(int year){
+
+    char *profile = malloc(1000 * sizeof(char));
+    strcpy(profile, "");
+    char formatted_string[100];
 
     DIR *dir;
     struct dirent *entry;
@@ -253,7 +274,6 @@ int LIST_YEAR(int year){
         perror("opendir");
         exit(EXIT_FAILURE);
     }
-    printf("Pessoas formadas em %d:\n", year);
     int cont = 0;
     // Loop through all the entries in the directory
     while ((entry = readdir(dir)) != NULL) {
@@ -289,23 +309,18 @@ int LIST_YEAR(int year){
                 *newline = '\0';
             }
             // printf("Nome: %sSobrenome: ", buffer);
-            fgets(buffer, 50, fp);
-            // printf("%s", buffer);
+
             fgets(buffer, 50, fp);
             // printf("Residência: %s", buffer);
             fgets(buffer, 50, fp);
             // printf("Formação Acadêmica: %s", buffer);
-            char n_course[100];
-            strcpy(n_course,buffer);
-            newline = strchr(n_course, '\n');
-            if (newline != NULL) {
-                // Replace the newline character with a null character
-                *newline = '\0';
-            }
+            fgets(buffer, 50, fp);
+            // printf("Ano de Formatura: %s", buffer);
             fgets(buffer, 50, fp);
             int graduation_year = atoi(buffer);
             if(graduation_year == year){
-                printf("%s %s %s\n", n_email, name, n_course);
+                snprintf(formatted_string, 1000, "%s %s\n", n_email, name);
+                strcat(profile, formatted_string);
                 cont ++;
             }
         }
@@ -313,13 +328,18 @@ int LIST_YEAR(int year){
     // Close the directory
     closedir(dir);
     if (cont == 0){
-        printf("Não há nenhum usuário cadastrado do ano %d\n", year);
+        return "Não há nenhum usuário cadastrado do ano\n";
     }
+    return profile;
 
 
 };
 
-int LIST_ALL(){
+char* LIST_ALL(){
+
+    char *profile = malloc(10000 * sizeof(char));
+    strcpy(profile, "");
+    char formatted_string[10000];
 
     DIR *dir;
     struct dirent *entry;
@@ -350,20 +370,26 @@ int LIST_ALL(){
             // printf("Processing file: %s\n", path);
             // TODO: Add your code to process the file here
 
-            GET_PROFILE(prefix);
+            strcpy(formatted_string,GET_PROFILE(prefix));
+            strcat(profile, formatted_string);
             cont ++;
         }
     }
     // Close the directory
     closedir(dir);
     if (cont == 0){
-        printf("Não há nenhum usuário cadastrado\n");
+        return "Não há nenhum usuário cadastrado\n";
     }
+    return profile;
 
 
 };
 
-int LIST_SKILL(char *sub_skill){
+char* LIST_SKILL(char *sub_skill){
+
+    char *profile = malloc(1000 * sizeof(char));
+    strcpy(profile, "");
+    char formatted_string[1000];
 
     DIR *dir;
     struct dirent *entry;
@@ -374,7 +400,6 @@ int LIST_SKILL(char *sub_skill){
         perror("opendir");
         exit(EXIT_FAILURE);
     }
-    printf("Pessoas que possuem habilidade %s:\n", sub_skill);
     int cont = 0;
     // Loop through all the entries in the directory
     while ((entry = readdir(dir)) != NULL) {
@@ -426,7 +451,8 @@ int LIST_SKILL(char *sub_skill){
                 *newline = '\0';
             }
             if(strstr(buffer, sub_skill)){
-                printf("%s %s\n", n_email, name);
+                snprintf(formatted_string, 1000, "%s %s\n", n_email, name);
+                strcat(profile, formatted_string);
                 cont ++;
             }
         }
@@ -434,11 +460,13 @@ int LIST_SKILL(char *sub_skill){
     // Close the directory
     closedir(dir);
     if (cont == 0){
-        printf("Não há nenhum usuário cadastrado com a habilidade %s\n", sub_skill);
+        return "Não há nenhum usuário cadastrado com essa habilidade\n";
     }
+    return profile;
 
 
 };
+
 // Function designed for chat between client and server.
 void func(int connfd)
 {
@@ -448,34 +476,129 @@ void func(int connfd)
     for (;;)
     {
         bzero(buff, MAX);
+        int cont = 0;
+        char * message;
 
         // read the message from client and copy it in buffer
         read(connfd, buff, sizeof(buff));
         // print buffer which contains the client contents
         printf("From client: %s\n", buff);
+        char *newline = strchr(buff, '\n');
+        if (newline != NULL) {
+            // Replace the newline character with a null character
+            *newline = '\0';
+        }
+        printf("buffer = --%s--\n", buff);
+        if (strcmp("list_all", buff) == 0){
 
-        if (strncmp("1", buff, 1) == 0)
-        {
-            char *message = "Registration Process started...\n Enter e-mail: \n";
-            n = 0;
-            while ((buff[n] = message[n]) && (message[n++] != '\n'))
-                ;
+            message = LIST_ALL();
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            continue;
+        }
+        if (strcmp("get_email", buff) == 0){
+            message = "Enter email:\n";
+            strcpy(buff, message);
             write(connfd, buff, sizeof(buff));
             read(connfd, buff, sizeof(buff));
-            printf("sent email:%s\n", buff);
+            printf("Email: %s\n", buff);
+            char *newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            message = GET_PROFILE(buff);
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            continue;
+        }
+        if (strcmp("remove_email", buff) == 0){
+            message = "Enter email:\n";
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            read(connfd, buff, sizeof(buff));
+            printf("Email: %s\n", buff);
+            char *newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            REMOVE_PROFILE(buff);
+            message = "Profile removed!";
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            continue;
+        }
+        if (strcmp("list_course", buff) == 0){
+            message = "Enter course:\n";
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            read(connfd, buff, sizeof(buff));
+            printf("Course: %s\n", buff);
+            char *newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            message = LIST_COURSE(buff);
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            continue;
+        }
+        if (strcmp("list_year", buff) == 0){
+            message = "Enter year:\n";
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            read(connfd, buff, sizeof(buff));
+            printf("year: %s\n", buff);
+            char *newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            message = LIST_YEAR(atoi(buff));
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            continue;
+        }
+        if (strcmp("list_skills", buff) == 0){
+            message = "Enter skill:\n";
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            read(connfd, buff, sizeof(buff));
+            printf("skill: %s\n", buff);
+            char *newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            message = LIST_SKILL(buff);
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            continue;
+        }
+        // if (strncmp("1", buff, 1) == 0)
+        // {
+        //     char *message = "Registration Process started...\n Enter e-mail: \n";
+        //     n = 0;
+        //     while ((buff[n] = message[n]) && (message[n++] != '\n'))
+        //         ;
+        //     write(connfd, buff, sizeof(buff));
+        //     read(connfd, buff, sizeof(buff));
+        //     printf("sent email:%s\n", buff);
 
-            message = "Enter e-mail: \n";
-            n = 0;
-            while ((buff[n] = message[n]) && (message[n++] != '\n'))
-                ;
-            write(connfd, buff, sizeof(buff));
-        }
-        else
-        {
-            bzero(buff, MAX);
-            // and send that buffer to client
-            write(connfd, buff, sizeof(buff));
-        }
+        //     message = "Enter e-mail: \n";
+        //     n = 0;
+        //     while ((buff[n] = message[n]) && (message[n++] != '\n'))
+        //         ;
+        //     write(connfd, buff, sizeof(buff));
+        // }
+        // else
+        // {
+        //     bzero(buff, MAX);
+        //     // and send that buffer to client
+        //     write(connfd, buff, sizeof(buff));
+        // }
 
         /* commands:
          register
