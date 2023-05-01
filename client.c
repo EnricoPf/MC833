@@ -11,29 +11,24 @@
 #define SA struct sockaddr
 
 /*
-Do lado do servidor, usaremos arquivos .txt numa pasta para armazenar perfils
+Do lado do cliente, usamos funções compostas de nomes maisculos seguidos dos dados para essas funções, se multiplos, são separados por um char ';'
 Detalhamento de funções
 para as funções, mandamos o nome da função depois os dados
 //cadastrar um novo perfil utilizando o email como identificador;
-CREATE_PROFILE(string data) CREATE email; name; surname; residence; course; year; skills;
- string data = email; name; surname; residence; course; year; skills;
+CREATE email; name; surname; residence; course; year; skills;
 // listar todas as pessoas (email e nome) formadas em um determinado curso;
-LIST_COURSE(string n_course) COURSE n_course
-só checar se string==curso
+COURSE n_course
 // listar todas as pessoas (email e nome) que possuam uma determinada habilidade;
-LIST_SKILL(string sub_skill) SKILL sub_skill
-checar se a string sub_skill é substring da string skills de todos
+SKILL sub_skill
 // listar todas as pessoas (email, nome e curso) formadas em um determinado ano;
-LIST_YEAR(int n_year) YEAR n_year
-checar se n_year==year dos perfis
+YEAR n_year
 // listar todas as informações de todos os perfis;
-LIST_ALL() ALL
+ALL
 // dado o email de um perfil, retornar suas informações;
-GET_PROFILE(string n_email) GET n_email
- só checar os nomes dos arquivos,veja abaixo
+GET n_email
 // remover um perfil a partir de seu identificador (email);
-REMOVE_PROFILE(string n_email) REMOVE n_email
- salvamos os arquivos com a email(ID) como nome pra ficar mais facil de deletar
+REMOVE n_email
+
 */
 
 

@@ -114,6 +114,7 @@ int GET_PROFILE(char* n_email){
     }
     return 0;
 }
+
 int LIST_COURSE(char *n_course){
 
     DIR *dir;
