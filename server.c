@@ -481,6 +481,9 @@ void func(int connfd)
 
         // read the message from client and copy it in buffer
         read(connfd, buff, sizeof(buff));
+        while(!strcmp(buff,"")){
+            read(connfd, buff, sizeof(buff));
+        }
         // print buffer which contains the client contents
         printf("From client: %s\n", buff);
         char *newline = strchr(buff, '\n');
@@ -494,13 +497,167 @@ void func(int connfd)
             message = LIST_ALL();
             strcpy(buff, message);
             write(connfd, buff, sizeof(buff));
+            bzero(buff, MAX);
+
             continue;
         }
+        if (strcmp("register", buff) == 0){
+            char *newline;
+            char *profile = malloc(1000 * sizeof(char));
+            strcpy(profile, "");
+            char formatted_string[100];
+
+            message = "Enter email:\n";
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            
+
+            read(connfd, buff, sizeof(buff));
+            while(!strcmp(buff,"")){
+                read(connfd, buff, sizeof(buff));
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("Email: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            message = "Enter name:\n";
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            
+
+            read(connfd, buff, sizeof(buff));
+            while(!strcmp(buff,"")){
+                read(connfd, buff, sizeof(buff));
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("name: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            message = "Enter surname:\n";
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            
+
+            read(connfd, buff, sizeof(buff));
+            while(!strcmp(buff,"")){
+                read(connfd, buff, sizeof(buff));
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("surname: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            message = "Enter local:\n";
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            
+
+            read(connfd, buff, sizeof(buff));
+            while(!strcmp(buff,"")){
+                read(connfd, buff, sizeof(buff));
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("Local: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            message = "Enter course:\n";
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            
+
+            read(connfd, buff, sizeof(buff));
+            while(!strcmp(buff,"")){
+                read(connfd, buff, sizeof(buff));
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("Course: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            message = "Enter year:\n";
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            
+
+            read(connfd, buff, sizeof(buff));
+            while(!strcmp(buff,"")){
+                read(connfd, buff, sizeof(buff));
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("Year: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            message = "Enter skills:\n";
+            strcpy(buff, message);
+            write(connfd, buff, sizeof(buff));
+            
+
+            read(connfd, buff, sizeof(buff));
+            while(!strcmp(buff,"")){
+                read(connfd, buff, sizeof(buff));
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("Skills: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            printf("PROFILE %s", profile);
+            CREATE_PROFILE(profile);
+            message = "Perfil criado!\n";
+            write(connfd, buff, sizeof(buff));
+            bzero(buff, MAX);
+
+            continue;
+        }
+
         if (strcmp("get_email", buff) == 0){
             message = "Enter email:\n";
             strcpy(buff, message);
             write(connfd, buff, sizeof(buff));
+            bzero(buff, MAX);
             read(connfd, buff, sizeof(buff));
+            while(!strcmp(buff,"")){
+                read(connfd, buff, sizeof(buff));
+            }
             printf("Email: %s\n", buff);
             char *newline = strchr(buff, '\n');
             if (newline != NULL) {
@@ -510,13 +667,18 @@ void func(int connfd)
             message = GET_PROFILE(buff);
             strcpy(buff, message);
             write(connfd, buff, sizeof(buff));
+            bzero(buff, MAX);
             continue;
         }
         if (strcmp("remove_email", buff) == 0){
             message = "Enter email:\n";
             strcpy(buff, message);
             write(connfd, buff, sizeof(buff));
+            bzero(buff, MAX);
             read(connfd, buff, sizeof(buff));
+            while(!strcmp(buff,"")){
+                read(connfd, buff, sizeof(buff));
+            }
             printf("Email: %s\n", buff);
             char *newline = strchr(buff, '\n');
             if (newline != NULL) {
@@ -527,13 +689,18 @@ void func(int connfd)
             message = "Profile removed!";
             strcpy(buff, message);
             write(connfd, buff, sizeof(buff));
+            bzero(buff, MAX);
             continue;
         }
         if (strcmp("list_course", buff) == 0){
             message = "Enter course:\n";
             strcpy(buff, message);
             write(connfd, buff, sizeof(buff));
+            bzero(buff, MAX);
             read(connfd, buff, sizeof(buff));
+            while(!strcmp(buff,"")){
+                read(connfd, buff, sizeof(buff));
+            }
             printf("Course: %s\n", buff);
             char *newline = strchr(buff, '\n');
             if (newline != NULL) {
@@ -543,14 +710,19 @@ void func(int connfd)
             message = LIST_COURSE(buff);
             strcpy(buff, message);
             write(connfd, buff, sizeof(buff));
+            bzero(buff, MAX);
             continue;
         }
         if (strcmp("list_year", buff) == 0){
             message = "Enter year:\n";
             strcpy(buff, message);
             write(connfd, buff, sizeof(buff));
+            bzero(buff, MAX);
             read(connfd, buff, sizeof(buff));
-            printf("year: %s\n", buff);
+            while(!strcmp(buff,"")){
+                read(connfd, buff, sizeof(buff));
+            }
+            printf("year: -%s-\n", buff); 
             char *newline = strchr(buff, '\n');
             if (newline != NULL) {
                 // Replace the newline character with a null character
@@ -559,12 +731,14 @@ void func(int connfd)
             message = LIST_YEAR(atoi(buff));
             strcpy(buff, message);
             write(connfd, buff, sizeof(buff));
+            bzero(buff, MAX);
             continue;
         }
         if (strcmp("list_skills", buff) == 0){
             message = "Enter skill:\n";
             strcpy(buff, message);
             write(connfd, buff, sizeof(buff));
+            bzero(buff, MAX);
             read(connfd, buff, sizeof(buff));
             printf("skill: %s\n", buff);
             char *newline = strchr(buff, '\n');
@@ -575,6 +749,7 @@ void func(int connfd)
             message = LIST_SKILL(buff);
             strcpy(buff, message);
             write(connfd, buff, sizeof(buff));
+            bzero(buff, MAX);
             continue;
         }
         // if (strncmp("1", buff, 1) == 0)
@@ -611,11 +786,11 @@ void func(int connfd)
         */
 
         // if msg contains "Exit" then server exit and chat ended.
-        if (strncmp("exit", buff, 4) == 0)
-        {
+        if (strcmp("exit", buff) == 0){
             printf("Server Exit...\n");
             break;
         }
+        continue;
     }
 }
 
