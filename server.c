@@ -37,37 +37,9 @@ REMOVE_PROFILE(string n_email) REMOVE n_email
  salvamos os arquivos com a email(ID) como nome pra ficar mais facil de deletar
 */
 
-struct profile
-{
-    char *email;
-    char *name;
-    char *residence;
-    char *course;
-    char *graduation_year;
-    char *skills;
-};
-
-// int CREATE_PROFILE(char *data)
-// {
-//     char *token = strtok(data, ";");
-//     // token[0] = email; 1-name; 2-surname; 3-residence; 4-course; 5-year; 6-skills;
-//     int counter = 0;
-//     while (token[counter] != NULL)
-//     {
-//         counter++;
-//     }
-//     if (counter != 7)
-//     {
-//         //missing parameter
-//         return 1;
-//     }
-//     FILE* fp;
-//     fp = fopen('./data/%C.txt',token[0]);
-// }
-int CREATE_PROFILE(char *data)
-{
+int CREATE_PROFILE(char *data){
     char *token = strtok(data, ";");
-    char email[100],name[100],surname[100],residence[100],course[100],year[4],skills[600];
+    char email[100],name[100],surname[100],residence[100],course[100],year[100],skills[600];
     // token[0] = email; 1-name; 2-surname; 3-residence; 4-course; 5-year; 6-skills;
     int counter = 0;
     while (token != NULL)
@@ -148,26 +120,26 @@ char* GET_PROFILE(char* n_email){
         fp = fopen(filepath,"r");
         sprintf(formatted_string, "-----------------------------\n");
         strcat(profile, formatted_string);
-        fgets(buffer, 50, fp);
+        fgets(buffer, 100, fp);
         sprintf(formatted_string, "Email: %s", buffer);
         strcat(profile, formatted_string);
-        fgets(buffer, 50, fp);
+        fgets(buffer, 100, fp);
         buffer[strlen(buffer)-1] = ' ';
         sprintf(formatted_string, "Nome: %sSobrenome: ", buffer);
         strcat(profile, formatted_string);
-        fgets(buffer, 50, fp);
+        fgets(buffer, 100, fp);
         sprintf(formatted_string, "%s", buffer);
         strcat(profile, formatted_string);
-        fgets(buffer, 50, fp);
+        fgets(buffer, 100, fp);
         sprintf(formatted_string, "Residência: %s", buffer);
         strcat(profile, formatted_string);
-        fgets(buffer, 50, fp);
+        fgets(buffer, 100, fp);
         sprintf(formatted_string, "Formação Acadêmica: %s", buffer);
         strcat(profile, formatted_string);
-        fgets(buffer, 50, fp);
+        fgets(buffer, 100, fp);
         sprintf(formatted_string, "Ano de Formatura: %s", buffer);
         strcat(profile, formatted_string);
-        fgets(buffer, 50, fp);
+        fgets(buffer, 100, fp);
         sprintf(formatted_string, "Habilidades: %s\n", buffer);
         strcat(profile, formatted_string);
         sprintf(formatted_string, "------------------------------\n");
@@ -202,16 +174,11 @@ char* LIST_COURSE(char *n_course){
             // Construct the path to the file
             char path[200] = "./data/";
             strcat(path, entry->d_name);
-            // snprintf(path, sizeof(path), "/data/%s", entry->d_name);
             char c, buffer[100];
 
-            // Process the file
-            // printf("Processing file: %s\n", path);
-            // TODO: Add your code to process the file here
             FILE* fp;
             fp = fopen(path,"r");
-            fgets(buffer, 50, fp);
-            // printf("Email: %s", buffer);
+            fgets(buffer, 100, fp);
             char n_email[100];
             strcpy(n_email,buffer);
             char *newline = strchr(n_email, '\n');
@@ -219,7 +186,7 @@ char* LIST_COURSE(char *n_course){
                 // Replace the newline character with a null character
                 *newline = '\0';
             }
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             buffer[strlen(buffer)-1] = ' ';
             char name[100];
             strcpy(name,buffer);
@@ -229,11 +196,11 @@ char* LIST_COURSE(char *n_course){
                 *newline = '\0';
             }
             // printf("Nome: %sSobrenome: ", buffer);
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             // printf("%s", buffer);
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             // printf("Residência: %s", buffer);
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             // printf("Formação Acadêmica: %s", buffer);
             newline = strchr(buffer, '\n');
             if (newline != NULL) {
@@ -282,16 +249,11 @@ char* LIST_YEAR(int year){
             // Construct the path to the file
             char path[200] = "./data/";
             strcat(path, entry->d_name);
-            // snprintf(path, sizeof(path), "/data/%s", entry->d_name);
             char c, buffer[100];
 
-            // Process the file
-            // printf("Processing file: %s\n", path);
-            // TODO: Add your code to process the file here
             FILE* fp;
             fp = fopen(path,"r");
-            fgets(buffer, 50, fp);
-            // printf("Email: %s", buffer);
+            fgets(buffer, 100, fp);
             char n_email[100];
             strcpy(n_email,buffer);
             char *newline = strchr(n_email, '\n');
@@ -299,7 +261,7 @@ char* LIST_YEAR(int year){
                 // Replace the newline character with a null character
                 *newline = '\0';
             }
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             buffer[strlen(buffer)-1] = ' ';
             char name[100];
             strcpy(name,buffer);
@@ -310,13 +272,13 @@ char* LIST_YEAR(int year){
             }
             // printf("Nome: %sSobrenome: ", buffer);
 
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             // printf("Residência: %s", buffer);
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             // printf("Formação Acadêmica: %s", buffer);
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             // printf("Ano de Formatura: %s", buffer);
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             int graduation_year = atoi(buffer);
             if(graduation_year == year){
                 snprintf(formatted_string, 1000, "%s %s\n", n_email, name);
@@ -358,7 +320,6 @@ char* LIST_ALL(){
             // Construct the path to the file
             char path[200] = "";
             strcat(path, entry->d_name);
-            // snprintf(path, sizeof(path), "/data/%s", entry->d_name);
             char c, buffer[100];
             char *suffix = ".txt";
             char *last_occurrence = strrchr(path, *suffix);
@@ -366,9 +327,6 @@ char* LIST_ALL(){
             char prefix[100];
             strncpy(prefix, path, prefix_length);
             prefix[prefix_length] = '\0';
-            // Process the file
-            // printf("Processing file: %s\n", path);
-            // TODO: Add your code to process the file here
 
             strcpy(formatted_string,GET_PROFILE(prefix));
             strcat(profile, formatted_string);
@@ -408,16 +366,10 @@ char* LIST_SKILL(char *sub_skill){
             // Construct the path to the file
             char path[200] = "./data/";
             strcat(path, entry->d_name);
-            // snprintf(path, sizeof(path), "/data/%s", entry->d_name);
             char c, buffer[100];
-
-            // Process the file
-            // printf("Processing file: %s\n", path);
-            // TODO: Add your code to process the file here
             FILE* fp;
             fp = fopen(path,"r");
-            fgets(buffer, 50, fp);
-            // printf("Email: %s", buffer);
+            fgets(buffer, 100, fp);
             char n_email[100];
             strcpy(n_email,buffer);
             char *newline = strchr(n_email, '\n');
@@ -425,7 +377,7 @@ char* LIST_SKILL(char *sub_skill){
                 // Replace the newline character with a null character
                 *newline = '\0';
             }
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             buffer[strlen(buffer)-1] = ' ';
             char name[100];
             strcpy(name,buffer);
@@ -435,15 +387,15 @@ char* LIST_SKILL(char *sub_skill){
                 *newline = '\0';
             }
             // printf("Nome: %sSobrenome: ", buffer);
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             // printf("%s", buffer);
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             // printf("Residência: %s", buffer);
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             // printf("Formação Acadêmica: %s", buffer);
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             // printf("Ano de Formatura: %s", buffer);
-            fgets(buffer, 50, fp);
+            fgets(buffer, 100, fp);
             // printf("Habilidades: %s\n", buffer);
             newline = strchr(buffer, '\n');
             if (newline != NULL) {
@@ -752,39 +704,6 @@ void func(int connfd)
             bzero(buff, MAX);
             continue;
         }
-        // if (strncmp("1", buff, 1) == 0)
-        // {
-        //     char *message = "Registration Process started...\n Enter e-mail: \n";
-        //     n = 0;
-        //     while ((buff[n] = message[n]) && (message[n++] != '\n'))
-        //         ;
-        //     write(connfd, buff, sizeof(buff));
-        //     read(connfd, buff, sizeof(buff));
-        //     printf("sent email:%s\n", buff);
-
-        //     message = "Enter e-mail: \n";
-        //     n = 0;
-        //     while ((buff[n] = message[n]) && (message[n++] != '\n'))
-        //         ;
-        //     write(connfd, buff, sizeof(buff));
-        // }
-        // else
-        // {
-        //     bzero(buff, MAX);
-        //     // and send that buffer to client
-        //     write(connfd, buff, sizeof(buff));
-        // }
-
-        /* commands:
-         register
-         list_course
-         list_skills
-         list_year
-         list_all
-         get_email
-         remove_email
-        */
-
         // if msg contains "Exit" then server exit and chat ended.
         if (strcmp("exit", buff) == 0){
             printf("Server Exit...\n");
