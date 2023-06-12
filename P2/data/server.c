@@ -68,7 +68,7 @@ struct profile
 int CREATE_PROFILE(char *data)
 {
     char *token = strtok(data, ";");
-    char email[100],name[100],surname[100],residence[100],course[100],year[4],skills[600];
+    char email[600],name[600],surname[600],residence[600],course[600],year[64],skills[600];
     // token[0] = email; 1-name; 2-surname; 3-residence; 4-course; 5-year; 6-skills;
     int counter = 0;
     while (token != NULL)
@@ -77,6 +77,7 @@ int CREATE_PROFILE(char *data)
         {
         case (0):
             strcpy(email,token);
+            printf("EMAIL --- %s\n",email);
             break;
         case (1):
             strcpy(name,token);
@@ -631,6 +632,163 @@ void func(int listenfd)
         printf("Server Exit...\n");
         break;
     }
+
+    //#################################################################//
+
+if (strcmp("register", buff) == 0){
+            char *newline;
+            char *profile = malloc(1000 * sizeof(char));
+            strcpy(profile, "");
+            char formatted_string[100];
+
+            message = "Enter email:\n";
+            strcpy(buff, message);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("Email: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            message = "Enter name:\n";
+            strcpy(buff, message);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
+
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            while(!strcmp(buff,"")){
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("name: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            message = "Enter surname:\n";
+            strcpy(buff, message);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
+
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            while(!strcmp(buff,"")){
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("surname: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            message = "Enter local:\n";
+            strcpy(buff, message);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
+
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            while(!strcmp(buff,"")){
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("Local: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            message = "Enter course:\n";
+            strcpy(buff, message);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
+
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            while(!strcmp(buff,"")){
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("Course: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            message = "Enter year:\n";
+            strcpy(buff, message);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
+
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            while(!strcmp(buff,"")){
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("Year: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            message = "Enter skills:\n";
+            strcpy(buff, message);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
+
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            while(!strcmp(buff,"")){
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            }
+            newline = strchr(buff, '\n');
+            if (newline != NULL) {
+                // Replace the newline character with a null character
+                *newline = '\0';
+            }
+            printf("Skills: %s\n", buff);
+            snprintf(formatted_string, 90000, "%s;", buff);
+            strcat(profile, formatted_string);
+            
+            bzero(buff, MAX);
+            printf("PROFILE %s\n", profile);
+            CREATE_PROFILE(profile);
+            message = "Perfil criado!\n";
+        }
 
     //#################################################################//
     if (strcmp("get_image", buff) == 0){
