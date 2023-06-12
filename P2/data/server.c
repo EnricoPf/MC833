@@ -468,21 +468,35 @@ char* LIST_SKILL(char *sub_skill){
 };
 
 // Function designed for chat between client and server.
-void func(int connfd)
+void func(int listenfd)
 {
     char buff[MAX];
-    int n;
+    struct sockaddr_in cliaddr;
+    int n, len;
     // infinite loop for chat
     for (;;)
     {
+        //receive the datagram
+        len = sizeof(cliaddr);
+        int n = recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len); //receive message from server
+        buff[n] = '\0';
+        puts(buff);
+            
+        // send the response
+        sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+
         bzero(buff, MAX);
         int cont = 0;
         char * message;
 
         // read the message from client and copy it in buffer
-        read(connfd, buff, sizeof(buff));
+recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
         while(!strcmp(buff,"")){
-            read(connfd, buff, sizeof(buff));
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
         }
         // print buffer which contains the client contents
         printf("From client: %s\n", buff);
@@ -496,8 +510,8 @@ void func(int connfd)
 
             message = LIST_ALL();
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            bzero(buff, MAX);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
 
             continue;
         }
@@ -509,12 +523,14 @@ void func(int connfd)
 
             message = "Enter email:\n";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-            read(connfd, buff, sizeof(buff));
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-                read(connfd, buff, sizeof(buff));
+        recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
             if (newline != NULL) {
@@ -528,12 +544,14 @@ void func(int connfd)
             bzero(buff, MAX);
             message = "Enter name:\n";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-            read(connfd, buff, sizeof(buff));
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-                read(connfd, buff, sizeof(buff));
+        recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
             if (newline != NULL) {
@@ -547,12 +565,14 @@ void func(int connfd)
             bzero(buff, MAX);
             message = "Enter surname:\n";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-            read(connfd, buff, sizeof(buff));
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-                read(connfd, buff, sizeof(buff));
+        recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
             if (newline != NULL) {
@@ -566,12 +586,14 @@ void func(int connfd)
             bzero(buff, MAX);
             message = "Enter local:\n";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-            read(connfd, buff, sizeof(buff));
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-                read(connfd, buff, sizeof(buff));
+        recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
             if (newline != NULL) {
@@ -585,12 +607,14 @@ void func(int connfd)
             bzero(buff, MAX);
             message = "Enter course:\n";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-            read(connfd, buff, sizeof(buff));
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-                read(connfd, buff, sizeof(buff));
+        recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
             if (newline != NULL) {
@@ -604,12 +628,14 @@ void func(int connfd)
             bzero(buff, MAX);
             message = "Enter year:\n";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-            read(connfd, buff, sizeof(buff));
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-                read(connfd, buff, sizeof(buff));
+        recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
             if (newline != NULL) {
@@ -623,12 +649,14 @@ void func(int connfd)
             bzero(buff, MAX);
             message = "Enter skills:\n";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-            read(connfd, buff, sizeof(buff));
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-                read(connfd, buff, sizeof(buff));
+        recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
             if (newline != NULL) {
@@ -643,8 +671,8 @@ void func(int connfd)
             printf("PROFILE %s", profile);
             CREATE_PROFILE(profile);
             message = "Perfil criado!\n";
-            write(connfd, buff, sizeof(buff));
-            bzero(buff, MAX);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
 
             continue;
         }
@@ -652,11 +680,13 @@ void func(int connfd)
         if (strcmp("get_email", buff) == 0){
             message = "Enter email:\n";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            bzero(buff, MAX);
-            read(connfd, buff, sizeof(buff));
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-                read(connfd, buff, sizeof(buff));
+        recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             }
             printf("Email: %s\n", buff);
             char *newline = strchr(buff, '\n');
@@ -666,18 +696,20 @@ void func(int connfd)
             }
             message = GET_PROFILE(buff);
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            bzero(buff, MAX);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
             continue;
         }
         if (strcmp("remove_email", buff) == 0){
             message = "Enter email:\n";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            bzero(buff, MAX);
-            read(connfd, buff, sizeof(buff));
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-                read(connfd, buff, sizeof(buff));
+        recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             }
             printf("Email: %s\n", buff);
             char *newline = strchr(buff, '\n');
@@ -688,18 +720,20 @@ void func(int connfd)
             REMOVE_PROFILE(buff);
             message = "Profile removed!";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            bzero(buff, MAX);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
             continue;
         }
         if (strcmp("list_course", buff) == 0){
             message = "Enter course:\n";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            bzero(buff, MAX);
-            read(connfd, buff, sizeof(buff));
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-                read(connfd, buff, sizeof(buff));
+        recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             }
             printf("Course: %s\n", buff);
             char *newline = strchr(buff, '\n');
@@ -709,18 +743,20 @@ void func(int connfd)
             }
             message = LIST_COURSE(buff);
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            bzero(buff, MAX);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
             continue;
         }
         if (strcmp("list_year", buff) == 0){
             message = "Enter year:\n";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            bzero(buff, MAX);
-            read(connfd, buff, sizeof(buff));
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-                read(connfd, buff, sizeof(buff));
+        recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             }
             printf("year: -%s-\n", buff); 
             char *newline = strchr(buff, '\n');
@@ -730,16 +766,17 @@ void func(int connfd)
             }
             message = LIST_YEAR(atoi(buff));
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            bzero(buff, MAX);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
             continue;
         }
         if (strcmp("list_skills", buff) == 0){
             message = "Enter skill:\n";
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            bzero(buff, MAX);
-            read(connfd, buff, sizeof(buff));
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
+    recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
             printf("skill: %s\n", buff);
             char *newline = strchr(buff, '\n');
             if (newline != NULL) {
@@ -748,8 +785,8 @@ void func(int connfd)
             }
             message = LIST_SKILL(buff);
             strcpy(buff, message);
-            write(connfd, buff, sizeof(buff));
-            bzero(buff, MAX);
+            sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
             continue;
         }
         // if (strncmp("1", buff, 1) == 0)
@@ -758,22 +795,22 @@ void func(int connfd)
         //     n = 0;
         //     while ((buff[n] = message[n]) && (message[n++] != '\n'))
         //         ;
-        //     write(connfd, buff, sizeof(buff));
-        //     read(connfd, buff, sizeof(buff));
+        //     sendto(listenfd, buff, MAX, 0,
+            // (struct sockaddr*)&cliaddr, sizeof(cliaddr));        //     read(connfd, buff, sizeof(buff));
         //     printf("sent email:%s\n", buff);
 
         //     message = "Enter e-mail: \n";
         //     n = 0;
         //     while ((buff[n] = message[n]) && (message[n++] != '\n'))
         //         ;
-        //     write(connfd, buff, sizeof(buff));
-        // }
+        //     sendto(listenfd, buff, MAX, 0,
+            // (struct sockaddr*)&cliaddr, sizeof(cliaddr));        // }
         // else
         // {
         //     bzero(buff, MAX);
         //     // and send that buffer to client
-        //     write(connfd, buff, sizeof(buff));
-        // }
+        //     sendto(listenfd, buff, MAX, 0,
+            // (struct sockaddr*)&cliaddr, sizeof(cliaddr));        // }
 
         /* commands:
          register
@@ -794,60 +831,83 @@ void func(int connfd)
     }
 }
 
-// Driver function
+// // Driver function
+// int main()
+// {
+//     int sockfd, connfd, len;
+//     struct sockaddr_in servaddr, cli;
+
+//     // socket create and verification
+//     sockfd = socket(AF_INET, SOCK_STREAM, 0);
+//     if (sockfd == -1)
+//     {
+//         printf("socket creation failed...\n");
+//         exit(0);
+//     }
+//     else
+//         printf("Socket successfully created..\n");
+//     bzero(&servaddr, sizeof(servaddr));
+
+//     // assign IP, PORT
+//     servaddr.sin_family = AF_INET;
+//     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+//     servaddr.sin_port = htons(PORT);
+
+//     // Binding newly created socket to given IP and verification
+//     if ((bind(sockfd, (SA *)&servaddr, sizeof(servaddr))) != 0)
+//     {
+//         printf("socket bind failed...\n");
+//         exit(0);
+//     }
+//     else
+//         printf("Socket successfully binded..\n");
+
+//     // Now server is ready to listen and verification
+//     if ((listen(sockfd, 5)) != 0)
+//     {
+//         printf("Listen failed...\n");
+//         exit(0);
+//     }
+//     else
+//         printf("Server listening..\n");
+//     len = sizeof(cli);
+
+//     // Accept the data packet from client and verification
+//     connfd = accept(sockfd, (SA *)&cli, &len);
+//     if (connfd < 0)
+//     {
+//         printf("server accept failed...\n");
+//         exit(0);
+//     }
+//     else
+//         printf("server accept the client...\n");
+
+//     // Function for chatting between client and server
+//     func(connfd);
+
+//     // After chatting close the socket
+//     close(sockfd);
+// }
+
+// Driver code
 int main()
-{
-    int sockfd, connfd, len;
-    struct sockaddr_in servaddr, cli;
-
-    // socket create and verification
-    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-    if (sockfd == -1)
-    {
-        printf("socket creation failed...\n");
-        exit(0);
-    }
-    else
-        printf("Socket successfully created..\n");
+{   
+    int listenfd, len;
+    struct sockaddr_in servaddr, cliaddr;
     bzero(&servaddr, sizeof(servaddr));
-
-    // assign IP, PORT
-    servaddr.sin_family = AF_INET;
+  
+    // Create a UDP Socket
+    listenfd = socket(AF_INET, SOCK_DGRAM, 0);        
     servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
     servaddr.sin_port = htons(PORT);
-
-    // Binding newly created socket to given IP and verification
-    if ((bind(sockfd, (SA *)&servaddr, sizeof(servaddr))) != 0)
-    {
-        printf("socket bind failed...\n");
-        exit(0);
-    }
-    else
-        printf("Socket successfully binded..\n");
-
-    // Now server is ready to listen and verification
-    if ((listen(sockfd, 5)) != 0)
-    {
-        printf("Listen failed...\n");
-        exit(0);
-    }
-    else
-        printf("Server listening..\n");
-    len = sizeof(cli);
-
-    // Accept the data packet from client and verification
-    connfd = accept(sockfd, (SA *)&cli, &len);
-    if (connfd < 0)
-    {
-        printf("server accept failed...\n");
-        exit(0);
-    }
-    else
-        printf("server accept the client...\n");
+    servaddr.sin_family = AF_INET; 
+   
+    // bind server address to socket descriptor
+    bind(listenfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
 
     // Function for chatting between client and server
-    func(connfd);
+    func(listenfd);
 
     // After chatting close the socket
-    close(sockfd);
+    close(listenfd);
 }
