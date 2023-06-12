@@ -30,7 +30,8 @@ ALL
 GET n_email
 // remover um perfil a partir de seu identificador (email);
 REMOVE n_email
-
+// dado o nome de uma imagem, faz download dela na pasta local
+GET_IMAGE n_image
 */
 
 

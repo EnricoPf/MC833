@@ -48,6 +48,52 @@ struct profile
     char *skills;
 };
 
+int get_image(char* n_image){
+    char filepath[100] = "./images/";
+    char *image_path = malloc(1000 * sizeof(char));
+    strcpy(image_path, "");
+    char formatted_string[1000];
+    strcat(filepath,n_email);
+    strcat(filepath,".png");   
+    if (access(filepath, F_OK) == 0) {
+        printf("Arquivo existe!\n");
+        char c[100] = "ARQUIVO EXISTE."
+        // FILE* fp;
+        // fp = fopen(filepath,"r");
+        // sprintf(formatted_string, "-----------------------------\n");
+        // strcat(profile, formatted_string);
+        // fgets(buffer, 50, fp);
+        // sprintf(formatted_string, "Email: %s", buffer);
+        // strcat(profile, formatted_string);
+        // fgets(buffer, 50, fp);
+        // buffer[strlen(buffer)-1] = ' ';
+        // sprintf(formatted_string, "Nome: %sSobrenome: ", buffer);
+        // strcat(profile, formatted_string);
+        // fgets(buffer, 50, fp);
+        // sprintf(formatted_string, "%s", buffer);
+        // strcat(profile, formatted_string);
+        // fgets(buffer, 50, fp);
+        // sprintf(formatted_string, "Residência: %s", buffer);
+        // strcat(profile, formatted_string);
+        // fgets(buffer, 50, fp);
+        // sprintf(formatted_string, "Formação Acadêmica: %s", buffer);
+        // strcat(profile, formatted_string);
+        // fgets(buffer, 50, fp);
+        // sprintf(formatted_string, "Ano de Formatura: %s", buffer);
+        // strcat(profile, formatted_string);
+        // fgets(buffer, 50, fp);
+        // sprintf(formatted_string, "Habilidades: %s\n", buffer);
+        // strcat(profile, formatted_string);
+        // sprintf(formatted_string, "------------------------------\n");
+        // strcat(profile, formatted_string);
+        return c;
+    } else {
+        printf("Arquivo (%s) NAO existe!\n", filepath);
+    // file doesn't exist
+    }
+    return profile;
+}
+
 // int CREATE_PROFILE(char *data)
 // {
 //     char *token = strtok(data, ";");
