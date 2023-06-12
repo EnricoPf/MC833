@@ -1,70 +1,102 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <unistd.h>
+#include <sys/types.h>
 #include <arpa/inet.h>
+#include <sys/socket.h>
+#include<netinet/in.h>
+#include<unistd.h>
+#include<stdlib.h>
+#include <strings.h>
 
-void die(const char *message) {
-    perror(message);
-    exit(1);
+  
+#define PORT 8081
+#define MAXLINE 1024
+
+/*
+Do lado do cliente, usamos funções compostas de nomes maisculos seguidos dos dados para essas funções, se multiplos, são separados por um char ';'
+Detalhamento de funções
+para as funções, mandamos o nome da função depois os dados
+//cadastrar um novo perfil utilizando o email como identificador;
+CREATE email; name; surname; residence; course; year; skills;
+// listar todas as pessoas (email e nome) formadas em um determinado curso;
+COURSE n_course
+// listar todas as pessoas (email e nome) que possuam uma determinada habilidade;
+SKILL sub_skill
+// listar todas as pessoas (email, nome e curso) formadas em um determinado ano;
+YEAR n_year
+// listar todas as informações de todos os perfis;
+ALL
+// dado o email de um perfil, retornar suas informações;
+GET n_email
+// remover um perfil a partir de seu identificador (email);
+REMOVE n_email
+
+*/
+
+
+
+void func(int sockfd, struct sockaddr_in servaddr)
+{
+	char buffer[MAXLINE];
+	int n;
+    printf("Enter your command:\n");
+	printf("commands: register\nlist_course\nlist_skills\nlist_year\nlist_all\nget_email\nremove_email\nget_image\nexit\n\n");
+	for (;;) {
+		bzero(buffer, sizeof(buffer));
+		n = 0;
+		while ((buffer[n++] = getchar()) != '\n')
+			;
+		char *newline = strchr(buffer, '\n');
+		if (newline != NULL) {
+			// Replace the newline character with a null character
+			*newline = '\0';
+		}
+		printf("----%s----\n", buffer);
+		// request to send datagram
+		// no need to specify server address in sendto
+		// connect stores the peers IP and port
+		sendto(sockfd, buffer, MAXLINE, 0, (struct sockaddr*)NULL, sizeof(servaddr));
+		if (strcmp("exit", buffer) == 0){
+			printf("Client Exit...\n");
+			break;
+		}
+		bzero(buffer, sizeof(buffer));
+
+		// waiting for response
+		recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);
+		puts(buffer);
+		// if (strcmp(buffer, "exit")== 0) {
+		// 	printf("Client Exit....\n");
+		// 	break;
+		// }
+	}
 }
 
-void sendImage(const char *filename, const char *serverIP, int serverPort) {
-    FILE *file = fopen(filename, "rb");
-    if (!file) {
-        die("Failed to open image file");
+// Driver code
+int main()
+{   
+    int sockfd, n;
+    struct sockaddr_in servaddr;
+      
+    // clear servaddr
+    bzero(&servaddr, sizeof(servaddr));
+    servaddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+    servaddr.sin_port = htons(PORT);
+    servaddr.sin_family = AF_INET;
+      
+    // create datagram socket
+    sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+      
+    // connect to server
+    if(connect(sockfd, (struct sockaddr *)&servaddr, sizeof(servaddr)) < 0)
+    {
+        printf("\n Error : Connect Failed \n");
+        exit(0);
     }
-
-    fseek(file, 0, SEEK_END);
-    long fileSize = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
-    char *buffer = (char *)malloc(fileSize);
-    if (!buffer) {
-        fclose(file);
-        die("Memory allocation failed");
-    }
-
-    size_t bytesRead = fread(buffer, 1, fileSize, file);
-    fclose(file);
-
-    int sockfd;
-    struct sockaddr_in serverAddr;
-
-    // Create UDP socket
-    if ((sockfd = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        free(buffer);
-        die("Failed to create socket");
-    }
-
-    memset(&serverAddr, 0, sizeof(serverAddr));
-    serverAddr.sin_family = AF_INET;
-    serverAddr.sin_port = htons(serverPort);
-
-    if (inet_pton(AF_INET, serverIP, &(serverAddr.sin_addr)) <= 0) {
-        free(buffer);
-        die("Invalid server IP address");
-    }
-
-    // Send image data to the server
-    ssize_t bytesSent = sendto(sockfd, buffer, bytesRead, 0, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
-    if (bytesSent < 0) {
-        free(buffer);
-        die("Error in sendto()");
-    }
-
-    printf("Sent a grayscale PNG image to the server: %ld bytes\n", bytesRead);
-
-    free(buffer);
+  
+	// function for chat
+	func(sockfd, servaddr);
+  
+    // close the descriptor
     close(sockfd);
-}
-
-int main() {
-    const char *imageFile = "grayscale.png";
-    const char *serverIP = "127.0.0.1";  // Server IP address
-    int serverPort = 12345;              // Server port
-
-    sendImage(imageFile, serverIP, serverPort);
-
-    return 0;
 }
