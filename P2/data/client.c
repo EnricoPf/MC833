@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <strings.h>
+#include <string.h>
 #include <sys/types.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -9,8 +9,8 @@
 #include <strings.h>
 
   
-#define PORT 5000
-#define MAXLINE 1000
+#define PORT 8081
+#define MAXLINE 1024
 
 /*
 Do lado do cliente, usamos funções compostas de nomes maisculos seguidos dos dados para essas funções, se multiplos, são separados por um char ';'
@@ -40,16 +40,26 @@ void func(int sockfd, struct sockaddr_in servaddr)
 	char buffer[MAXLINE];
 	int n;
     printf("Enter your command:\n");
-	printf("commands: register\nlist_course\nlist_skills\nlist_year\nlist_all\nget_email\nremove_email\n");
+	printf("commands: register\nlist_course\nlist_skills\nlist_year\nlist_all\nget_email\nremove_email\n\n");
 	for (;;) {
 		bzero(buffer, sizeof(buffer));
 		n = 0;
 		while ((buffer[n++] = getchar()) != '\n')
 			;
+		char *newline = strchr(buffer, '\n');
+		if (newline != NULL) {
+			// Replace the newline character with a null character
+			*newline = '\0';
+		}
+		printf("----%s----\n", buffer);
 		// request to send datagram
 		// no need to specify server address in sendto
 		// connect stores the peers IP and port
 		sendto(sockfd, buffer, MAXLINE, 0, (struct sockaddr*)NULL, sizeof(servaddr));
+		if (strcmp("exit", buffer) == 0){
+			printf("Client Exit...\n");
+			break;
+		}
 		bzero(buffer, sizeof(buffer));
 
 		// waiting for response

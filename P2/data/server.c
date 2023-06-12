@@ -7,9 +7,10 @@
 #include <sys/types.h>
 #include <unistd.h> // read(), write(), close()
 #include <dirent.h> // loop in directories
-#define MAX 80000
+#define MAX 1024
 #define PORT 8081
 #define SA struct sockaddr
+#define TIMEOUT_MS      100     /* Seconds between retransmits */
 
 /*
 Do lado do servidor, usaremos arquivos .txt numa pasta para armazenar perfils
@@ -467,6 +468,32 @@ char* LIST_SKILL(char *sub_skill){
 
 };
 
+char* GET_IMAGE(char* n_email){
+    char filepath[100] = "./data/";
+    strcat(filepath,n_email);
+    strcat(filepath,".png");   
+    if (access(filepath, F_OK) == 0) {
+
+        // TO DO:
+        // QUEBRAR A IMAGEM EM PACOTES
+        // ENVIAR PARA O USUÁRIO
+
+
+        // adicionar código aqui...
+        // ...
+
+
+
+
+
+
+        return "File downloaded!\n";
+    }
+    else {
+        return "Arquivo png não encontrado!\n";
+    // file doesn't exist
+    }
+}
 // Function designed for chat between client and server.
 void func(int listenfd)
 {
@@ -476,43 +503,219 @@ void func(int listenfd)
     // infinite loop for chat
     for (;;)
     {
-        //receive the datagram
-        len = sizeof(cliaddr);
-        int n = recvfrom(listenfd, buff, sizeof(buff),
-                0, (struct sockaddr*)&cliaddr,&len); //receive message from server
+    //receive the datagram
+    len = sizeof(cliaddr);
+    int n = recvfrom(listenfd, buff, sizeof(buff),
+            0, (struct sockaddr*)&cliaddr,&len); //receive message from server
+    buff[n] = '\0';
+    puts(buff);
+
+    char *newline = strchr(buff, '\n');
+    if (newline != NULL) {
+        // Replace the newline character with a null character
+        *newline = '\0';
+    }
+
+    char *message = "Invalid Command\n";
+//////////////////////////////////////////////////////////////////////////////
+
+    //#################################################################//
+
+    if (strcmp("list_all", buff) == 0){
+        message = LIST_ALL();
+    }
+
+    //#################################################################//
+
+    if (strcmp("get_email", buff) == 0){
+        message = "Enter email:\n";
+        sendto(listenfd, message, MAX, 0,
+          (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+
+        n = recvfrom(listenfd, buff, sizeof(buff),
+            0, (struct sockaddr*)&cliaddr,&len); //receive message from server
         buff[n] = '\0';
         puts(buff);
-            
-        // send the response
-        sendto(listenfd, buff, MAX, 0,
-            (struct sockaddr*)&cliaddr, sizeof(cliaddr));
 
-        bzero(buff, MAX);
+        newline = strchr(buff, '\n');
+        if (newline != NULL) {
+            // Replace the newline character with a null character
+            *newline = '\0';
+        }
+        message = GET_PROFILE(buff);
+    }
+
+
+    //#################################################################//
+
+    if (strcmp("list_course", buff) == 0){
+        message = "Enter course:\n";
+        sendto(listenfd, message, MAX, 0,
+          (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+
+        n = recvfrom(listenfd, buff, sizeof(buff),
+            0, (struct sockaddr*)&cliaddr,&len); //receive message from server
+        buff[n] = '\0';
+        puts(buff);
+
+        newline = strchr(buff, '\n');
+        if (newline != NULL) {
+            // Replace the newline character with a null character
+            *newline = '\0';
+        }
+        message = LIST_COURSE(buff);
+    }
+    //#################################################################//
+
+    if (strcmp("list_year", buff) == 0){
+        message = "Enter year:\n";
+        sendto(listenfd, message, MAX, 0,
+          (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+
+        n = recvfrom(listenfd, buff, sizeof(buff),
+            0, (struct sockaddr*)&cliaddr,&len); //receive message from server
+        buff[n] = '\0';
+        puts(buff);
+
+        newline = strchr(buff, '\n');
+        if (newline != NULL) {
+            // Replace the newline character with a null character
+            *newline = '\0';
+        }
+        message = LIST_YEAR(atoi(buff));
+    }
+    //#################################################################//
+
+    if (strcmp("list_skills", buff) == 0){
+        message = "Enter skill:\n";
+        sendto(listenfd, message, MAX, 0,
+          (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+
+        n = recvfrom(listenfd, buff, sizeof(buff),
+            0, (struct sockaddr*)&cliaddr,&len); //receive message from server
+        buff[n] = '\0';
+        puts(buff);
+
+        newline = strchr(buff, '\n');
+        if (newline != NULL) {
+            // Replace the newline character with a null character
+            *newline = '\0';
+        }
+        message = LIST_SKILL(buff);
+    }
+    //#################################################################//
+
+    if (strcmp("remove_email", buff) == 0){
+        message = "Enter email:\n";
+        sendto(listenfd, message, MAX, 0,
+          (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+
+        n = recvfrom(listenfd, buff, sizeof(buff),
+            0, (struct sockaddr*)&cliaddr,&len); //receive message from server
+        buff[n] = '\0';
+        puts(buff);
+
+        newline = strchr(buff, '\n');
+        if (newline != NULL) {
+            // Replace the newline character with a null character
+            *newline = '\0';
+        }
+        message = "Profile removed!\n";
+        REMOVE_PROFILE(buff);
+    }
+
+
+    //#################################################################//
+
+    if (strcmp("exit", buff) == 0){
+        printf("Server Exit...\n");
+        break;
+    }
+
+    //#################################################################//
+    if (strcmp("get_image", buff) == 0){
+        message = "Enter email:\n";
+        sendto(listenfd, message, MAX, 0,
+          (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+
+        n = recvfrom(listenfd, buff, sizeof(buff),
+            0, (struct sockaddr*)&cliaddr,&len); //receive message from server
+        buff[n] = '\0';
+        puts(buff);
+
+        newline = strchr(buff, '\n');
+        if (newline != NULL) {
+            // Replace the newline character with a null character
+            *newline = '\0';
+        }
+        message = GET_IMAGE(buff);
+    }
+    //#####
+//////////////////////////////////////////////////////////////////////////////
+    // send the response
+    sendto(listenfd, message, MAX, 0,
+          (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+    }
+    return;
+    for (;;)
+    {
+        // receive the datagram
+            // printf("chegou aquiiii");
+            // char *response = "eae client\n";
+            // len = sizeof(cliaddr);
+            // int n = recvfrom(listenfd, buff, sizeof(buff),
+            //         0, (struct sockaddr*)&cliaddr,&len); //receive message from server
+            // char *newlin = strchr(buff, '\n');
+            // if (newlin != NULL) {
+            //     // Replace the newlin character with a null character
+            //     *newlin = '\0';
+            // }
+            // puts(buff);
+            // // send the response
+            // sendto(listenfd, buff, MAX, 0,
+            //     (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+
+
+            // bzero(buff, MAX);
+            // break;
+
         int cont = 0;
         char * message;
 
         // read the message from client and copy it in buffer
-recvfrom(listenfd, buff, sizeof(buff),
+        recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
         while(!strcmp(buff,"")){
-    recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
         }
-        // print buffer which contains the client contents
-        printf("From client: %s\n", buff);
         char *newline = strchr(buff, '\n');
         if (newline != NULL) {
             // Replace the newline character with a null character
             *newline = '\0';
         }
+        message = "Olá\n";
+        sendto(listenfd, message, MAX, 0,
+                (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+        // print buffer which contains the client contents
+        printf("From client: %s\n", buff);
         printf("buffer = --%s--\n", buff);
+        continue;
         if (strcmp("list_all", buff) == 0){
-
             message = LIST_ALL();
+            message = "listed!\n";
             strcpy(buff, message);
-            sendto(listenfd, buff, MAX, 0,
-            (struct sockaddr*)&cliaddr, sizeof(cliaddr));            bzero(buff, MAX);
-
+            printf("buff list_all -> %s", buff);
+            recvfrom(listenfd, buff, sizeof(buff),
+                0, (struct sockaddr*)&cliaddr,&len);
+            int result = sendto(listenfd, buff, MAX, 0,
+            (struct sockaddr*)&cliaddr, sizeof(cliaddr));
+            if(result == -1){
+                printf("Sending failed\n");
+            }
+            else printf("result = %d", result);
+            bzero(buff, MAX);
+            break;
             continue;
         }
         if (strcmp("register", buff) == 0){
@@ -526,10 +729,10 @@ recvfrom(listenfd, buff, sizeof(buff),
             sendto(listenfd, buff, MAX, 0,
             (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-    recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-        recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
@@ -547,10 +750,10 @@ recvfrom(listenfd, buff, sizeof(buff),
             sendto(listenfd, buff, MAX, 0,
             (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-    recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-        recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
@@ -568,10 +771,10 @@ recvfrom(listenfd, buff, sizeof(buff),
             sendto(listenfd, buff, MAX, 0,
             (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-    recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-        recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
@@ -589,10 +792,10 @@ recvfrom(listenfd, buff, sizeof(buff),
             sendto(listenfd, buff, MAX, 0,
             (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-    recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-        recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
@@ -610,10 +813,10 @@ recvfrom(listenfd, buff, sizeof(buff),
             sendto(listenfd, buff, MAX, 0,
             (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-    recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-        recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
@@ -631,10 +834,10 @@ recvfrom(listenfd, buff, sizeof(buff),
             sendto(listenfd, buff, MAX, 0,
             (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-    recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-        recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
@@ -652,10 +855,10 @@ recvfrom(listenfd, buff, sizeof(buff),
             sendto(listenfd, buff, MAX, 0,
             (struct sockaddr*)&cliaddr, sizeof(cliaddr));            
 
-    recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             while(!strcmp(buff,"")){
-        recvfrom(listenfd, buff, sizeof(buff),
+            recvfrom(listenfd, buff, sizeof(buff),
                 0, (struct sockaddr*)&cliaddr,&len);
             }
             newline = strchr(buff, '\n');
@@ -902,6 +1105,9 @@ int main()
     servaddr.sin_port = htons(PORT);
     servaddr.sin_family = AF_INET; 
    
+    static int timeout = TIMEOUT_MS;
+    setsockopt(listenfd, SOL_SOCKET, SO_RCVTIMEO,(char*)&timeout,sizeof(timeout));
+
     // bind server address to socket descriptor
     bind(listenfd, (struct sockaddr*)&servaddr, sizeof(servaddr));
 
