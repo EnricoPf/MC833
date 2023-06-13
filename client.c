@@ -38,7 +38,7 @@ void func(int sockfd)
 	char buff[MAX];
 	int n;
     printf("Enter your command:\n");
-	printf("commands: register\nlist_course\nlist_skills\nlist_year\nlist_all\nget_email\nremove_email\n------------\n");
+	printf("commands: register\nlist_course\nlist_skills\nlist_year\nlist_all\nget_email\nremove_email\nget_image\n------------\n");
 	for (;;) {
 		bzero(buff, sizeof(buff));
 		n = 0;
