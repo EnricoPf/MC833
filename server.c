@@ -149,8 +149,9 @@ char *GET_IMAGE(char *n_image)
         int total = imageSize / MAX_SIZE;
         if (imageSize % MAX_SIZE != 0)
         {
-            image++;
+            total++;
         }
+
 
     }
     else
