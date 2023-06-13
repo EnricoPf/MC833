@@ -41,7 +41,7 @@ void func(int sockfd, struct sockaddr_in servaddr)
 	char buffer[MAXLINE];
 	int n;
     printf("Enter your command:\n");
-	printf("commands: register\nlist_course\nlist_skills\nlist_year\nlist_all\nget_email\nremove_email\nget_image\nexit\n\n");
+	printf("commands: register\nlist_course\nlist_skills\nlist_year\nlist_all\nget_email\nremove_email\nget_image\n------------\n");
 	for (;;) {
 		bzero(buffer, sizeof(buffer));
 		n = 0;
