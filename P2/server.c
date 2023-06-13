@@ -547,8 +547,9 @@ char *LIST_SKILL(char *sub_skill)
     return profile;
 };
 
-char* GET_IMAGE(char* n_email){
-    char filepath[100] = "./data/";
+char* GET_IMAGE(char* n_email, int listenfd){
+    char filepath[100] = "./images/";
+    struct sockaddr_in cliaddr;
     strcat(filepath,n_email);
     strcat(filepath,".png");   
     if (access(filepath, F_OK) == 0) {
@@ -557,21 +558,40 @@ char* GET_IMAGE(char* n_email){
         // struct for each packet of data
         typedef struct
         {
-            int total_n;         // total n of packets
+            int total;         // total n of packets
             int index;           // this packet's index
             char data[MAX_SIZE]; // packet data
         } Packet;
 
-        Packet packet;
+        Packet current_packet;
 
-        // adicionar código aqui...
-        // ...
+        FILE *image;
+        image = fopen(filepath, "rb");
+        if (image == NULL)
+        {
+            // #TODO: Error during opening
+        }
 
+        // find the number of bytes the image has and divide it into packets
+        fseek(image, 0, SEEK_END);
+        long int imageSize = ftell(image);
+        fseek(image, 0, SEEK_SET);
+        int total_n = imageSize / MAX_SIZE; //total number of packets
 
+        if (imageSize % MAX_SIZE != 0)
+        {
+            total_n++;
+        }
 
-
-
-
+        int current_index = 0;
+        int numbytes;
+        while ((numbytes = fread(current_packet.data, 1, MAX_SIZE, image)) > 0){
+            current_packet.index = current_index;
+            current_packet.total = total_n;
+            sendto(listenfd,&current_packet, sizeof(Packet), 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
+            current_index++;
+        }
+        fclose(image);
         return "File downloaded!\n";
     }
     else
@@ -579,7 +599,7 @@ char* GET_IMAGE(char* n_email){
         printf("Arquivo (%s) NAO existe!\n", filepath);
         // file doesn't exist
     }
-    return profile;
+    return "End.";
 }
 
 // Function designed for chat between client and server.
@@ -920,7 +940,7 @@ void func(int listenfd)
                 // Replace the newline character with a null character
                 *newline = '\0';
             }
-            message = GET_IMAGE(buff);
+            message = GET_IMAGE(buff, listenfd);
         }
         // #####
         //////////////////////////////////////////////////////////////////////////////
