@@ -39,7 +39,9 @@ GET_IMAGE n_image
 void func(int sockfd, struct sockaddr_in servaddr)
 {
 	char buffer[MAXLINE];
+    FILE *file;
 	int n;
+	int bytesRead;
     printf("Enter your command:\n");
 	printf("commands: register\nlist_course\nlist_skills\nlist_year\nlist_all\nget_email\nremove_email\nget_image\n------------\n");
 	for (;;) {
@@ -53,10 +55,66 @@ void func(int sockfd, struct sockaddr_in servaddr)
 			*newline = '\0';
 		}
 		printf("----%s----\n", buffer);
+		sendto(sockfd, buffer, MAXLINE, 0, (struct sockaddr*)NULL, sizeof(servaddr));
+		if (strcmp("get_image", buffer) == 0){
+			// send "get_image" and receive "Enter ID:"
+			recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);
+			// Send the id of the image
+			printf("%s\n",buffer);
+			bzero(buffer, sizeof(buffer));
+			n = 0;
+			while ((buffer[n++] = getchar()) != '\n')
+				;
+			char *newline = strchr(buffer, '\n');
+			if (newline != NULL) {
+				// Replace the newline character with a null character
+				*newline = '\0';
+			}
+			char* filepath;
+			sprintf(filepath, "%s.png",buffer);
+			FILE* received_image = fopen(filepath, "wb");
+
+			// send id and receive packets
+			sendto(sockfd, buffer, MAXLINE, 0, (struct sockaddr*)NULL, sizeof(servaddr));
+
+			// RECEIVE number_of_packets
+			recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);
+			newline = strchr(buffer, '\n');
+			if (newline != NULL) {
+				// Replace the newline character with a null character
+				*newline = '\0';
+			}
+			int number_of_packets = atoi(buffer);
+			printf("NÚMERO DE PACOTES -> %s\n", buffer);
+
+			bzero(buffer, sizeof(buffer));
+			// RECEIVE FIRST PACKET
+			bytesRead = recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);
+			newline = strchr(buffer, '\n');
+			if (newline != NULL) {
+				// Replace the newline character with a null character
+				*newline = '\0';
+			}
+			printf("PACOTE RECEBIDO-> %s\n", buffer);
+
+			// write data in a file
+        	fwrite(buffer, 1, bytesRead, received_image);
+			bzero(buffer, sizeof(buffer));
+			for(int i=1; i<number_of_packets;i++){
+				bytesRead = recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);
+				newline = strchr(buffer, '\n');
+				if (newline != NULL) {
+					// Replace the newline character with a null character
+					newline = '\0';
+				}
+        		fwrite(buffer, 1, bytesRead, received_image);
+				bzero(buffer, sizeof(buffer));
+			}
+			continue;
+		}
 		// request to send datagram
 		// no need to specify server address in sendto
 		// connect stores the peers IP and port
-		sendto(sockfd, buffer, MAXLINE, 0, (struct sockaddr*)NULL, sizeof(servaddr));
 		if (strcmp("exit", buffer) == 0){
 			printf("Client Exit...\n");
 			break;

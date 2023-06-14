@@ -548,8 +548,11 @@ char *LIST_SKILL(char *sub_skill)
 };
 
 char* GET_IMAGE(char* n_email, int listenfd){
+    char buffer[MAX_SIZE];
     char filepath[100] = "./images/";
     struct sockaddr_in cliaddr;
+    int n, len;
+    len = sizeof(cliaddr);
     strcat(filepath,n_email);
     strcat(filepath,".png");   
     if (access(filepath, F_OK) == 0) {
@@ -585,10 +588,22 @@ char* GET_IMAGE(char* n_email, int listenfd){
 
         int current_index = 0;
         int numbytes;
-        while ((numbytes = fread(current_packet.data, 1, MAX_SIZE, image)) > 0){
+        bzero(buffer, sizeof(buffer));
+        sprintf(buffer,"%d",total_n);
+        printf("enviando num packet = %s\n",buffer);
+        sendto(listenfd,buffer, sizeof(buffer), 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
+        n = recvfrom(listenfd, buffer, sizeof(buffer),
+                         0, (struct sockaddr *)&cliaddr, &len); // receive message from server
+        int cont=0;
+        numbytes = 1;
+        printf("num bytes read - %d", numbytes);
+        while (numbytes > 0){
+            printf("%d",cont);
+            cont++;
+            (numbytes = fread(current_packet.data, 1, MAX_SIZE, image));
             current_packet.index = current_index;
             current_packet.total = total_n;
-            sendto(listenfd,&current_packet, sizeof(Packet), 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
+            sendto(listenfd,&current_packet.data, sizeof(current_packet.data), 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
             current_index++;
         }
         fclose(image);
