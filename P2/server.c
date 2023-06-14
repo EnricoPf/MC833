@@ -55,7 +55,7 @@ struct profile
 //     strcpy(image_path, "");
 //     char formatted_string[1000];
 //     strcat(filepath,n_email);
-//     strcat(filepath,".png");   
+//     strcat(filepath,".png");
 //     if (access(filepath, F_OK) == 0) {
 //         printf("Arquivo existe!\n");
 //         char c[100] = "ARQUIVO EXISTE."
@@ -547,21 +547,22 @@ char *LIST_SKILL(char *sub_skill)
     return profile;
 };
 
-char* GET_IMAGE(char* n_email, int listenfd){
+char *GET_IMAGE(char *n_email, int listenfd, struct sockaddr_in cliaddr)
+{
     char buffer[MAX_SIZE];
     char filepath[100] = "./images/";
-    struct sockaddr_in cliaddr;
     int n, len;
     len = sizeof(cliaddr);
-    strcat(filepath,n_email);
-    strcat(filepath,".png");   
-    if (access(filepath, F_OK) == 0) {
+    strcat(filepath, n_email);
+    strcat(filepath, ".png");
+    if (access(filepath, F_OK) == 0)
+    {
 
         printf("Arquivo existe!\n");
         // struct for each packet of data
         typedef struct
         {
-            int total;         // total n of packets
+            int total;           // total n of packets
             int index;           // this packet's index
             char data[MAX_SIZE]; // packet data
         } Packet;
@@ -579,7 +580,7 @@ char* GET_IMAGE(char* n_email, int listenfd){
         fseek(image, 0, SEEK_END);
         long int imageSize = ftell(image);
         fseek(image, 0, SEEK_SET);
-        int total_n = imageSize / MAX_SIZE; //total number of packets
+        int total_n = imageSize / MAX_SIZE; // total number of packets
 
         if (imageSize % MAX_SIZE != 0)
         {
@@ -588,22 +589,13 @@ char* GET_IMAGE(char* n_email, int listenfd){
 
         int current_index = 0;
         int numbytes;
-        bzero(buffer, sizeof(buffer));
-        sprintf(buffer,"%d",total_n);
-        printf("enviando num packet = %s\n",buffer);
-        sendto(listenfd,buffer, sizeof(buffer), 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
-        n = recvfrom(listenfd, buffer, sizeof(buffer),
-                         0, (struct sockaddr *)&cliaddr, &len); // receive message from server
-        int cont=0;
-        numbytes = 1;
-        printf("num bytes read - %d", numbytes);
-        while (numbytes > 0){
-            printf("%d",cont);
-            cont++;
-            (numbytes = fread(current_packet.data, 1, MAX_SIZE, image));
+        while ((numbytes = fread(current_packet.data,1,MAX_SIZE,image)) > 0){
             current_packet.index = current_index;
             current_packet.total = total_n;
-            sendto(listenfd,&current_packet.data, sizeof(current_packet.data), 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
+            if (sendto(listenfd, &current_packet.data, sizeof(current_packet.data), 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr)) < 0)
+            {
+                return "Erro na transmissão";
+            }
             current_index++;
         }
         fclose(image);
@@ -955,9 +947,8 @@ void func(int listenfd)
                 // Replace the newline character with a null character
                 *newline = '\0';
             }
-            message = GET_IMAGE(buff, listenfd);
+            message = GET_IMAGE(buff, listenfd, cliaddr);
         }
-        // #####
         //////////////////////////////////////////////////////////////////////////////
         // send the response
         sendto(listenfd, message, MAX, 0,
