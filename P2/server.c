@@ -55,7 +55,7 @@ struct profile
 //     strcpy(image_path, "");
 //     char formatted_string[1000];
 //     strcat(filepath,n_email);
-//     strcat(filepath,".png");
+//     strcat(filepath,".jpg");
 //     if (access(filepath, F_OK) == 0) {
 //         printf("Arquivo existe!\n");
 //         char c[100] = "ARQUIVO EXISTE."
@@ -554,7 +554,7 @@ char *GET_IMAGE(char *n_email, int listenfd, struct sockaddr_in cliaddr)
     int n, len;
     len = sizeof(cliaddr);
     strcat(filepath, n_email);
-    strcat(filepath, ".png");
+    strcat(filepath, ".jpg");
     if (access(filepath, F_OK) == 0)
     {
 
@@ -589,6 +589,9 @@ char *GET_IMAGE(char *n_email, int listenfd, struct sockaddr_in cliaddr)
 
         int current_index = 0;
         int numbytes;
+        // convert to buffer and send the number of packets
+        sprintf(buffer, "%d", total_n);
+        sendto(listenfd, buffer, sizeof(buffer), 0, (struct sockaddr *)&cliaddr, sizeof(cliaddr));
         while ((numbytes = fread(current_packet.data,1,MAX_SIZE,image)) > 0){
             current_packet.index = current_index;
             current_packet.total = total_n;
@@ -597,6 +600,7 @@ char *GET_IMAGE(char *n_email, int listenfd, struct sockaddr_in cliaddr)
                 return "Erro na transmissão";
             }
             current_index++;
+            printf("PACOTE %d ENVIADO\n",current_index);
         }
         fclose(image);
         return "File downloaded!\n";
@@ -615,6 +619,7 @@ void func(int listenfd)
     char buff[MAX];
     struct sockaddr_in cliaddr;
     int n, len;
+    printf("Server listening...\n");
     // infinite loop for chat
     for (;;)
     {

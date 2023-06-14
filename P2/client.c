@@ -71,7 +71,7 @@ void func(int sockfd, struct sockaddr_in servaddr)
 				*newline = '\0';
 			}
 			char* filepath;
-			sprintf(filepath, "%s.png",buffer);
+			sprintf(filepath, "./downloads/%s.jpg",buffer);
 			FILE* received_image = fopen(filepath, "wb");
 
 			// send id and receive packets
@@ -95,13 +95,15 @@ void func(int sockfd, struct sockaddr_in servaddr)
 				// Replace the newline character with a null character
 				*newline = '\0';
 			}
-			printf("PACOTE RECEBIDO-> %s\n", buffer);
+			printf("PACOTE RECEBIDO\n");
+
 
 			// write data in a file
         	fwrite(buffer, 1, bytesRead, received_image);
 			bzero(buffer, sizeof(buffer));
 			for(int i=1; i<number_of_packets;i++){
 				bytesRead = recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)NULL, NULL);
+				printf("PACOTE %d RECEBIDO\n",i);
 				newline = strchr(buffer, '\n');
 				if (newline != NULL) {
 					// Replace the newline character with a null character
